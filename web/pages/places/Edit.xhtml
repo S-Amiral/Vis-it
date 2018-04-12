@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template.xhtml">
+    <ui:define name="title">
+        <h:outputText value="#{bundle.ListPlacesTitle}"></h:outputText>
+    </ui:define>
+    <ui:define name="body">
+        <div class="container maxHeight">
+            <h2>Éditer un lieu</h2>
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.EditPlacesLabel_title}" for="title" />
+                    <h:inputText id="title" value="#{placesController.selected.title}" title="#{bundle.EditPlacesTitle_title}" required="true" requiredMessage="#{bundle.EditPlacesRequiredMessage_title}"/>
+                    <h:outputLabel value="#{bundle.EditPlacesLabel_latitude}" for="latitude" />
+                    <h:inputText id="latitude" value="#{placesController.selected.latitude}" title="#{bundle.EditPlacesTitle_latitude}" required="true" requiredMessage="#{bundle.EditPlacesRequiredMessage_latitude}"/>
+                    <h:outputLabel value="#{bundle.EditPlacesLabel_longitude}" for="longitude" />
+                    <h:inputText id="longitude" value="#{placesController.selected.longitude}" title="#{bundle.EditPlacesTitle_longitude}" required="true" requiredMessage="#{bundle.EditPlacesRequiredMessage_longitude}"/>
+                    <h:outputLabel value="#{bundle.EditPlacesLabel_description}" for="description" />
+                    <h:inputText id="description" value="#{placesController.selected.description}" title="#{bundle.EditPlacesTitle_description}" />
+                </h:panelGrid>
+                <h:commandLink action="#{placesController.update}" value="#{bundle.EditPlacesSaveLink}"/>
+                <br />
+                <br />
+                <h:link outcome="View" value="#{bundle.EditPlacesViewLink}"/>
+                <br />
+                <h:commandLink action="#{placesController.prepareList}" value="#{bundle.EditPlacesShowAllLink}" immediate="true"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.EditPlacesIndexLink}" />
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

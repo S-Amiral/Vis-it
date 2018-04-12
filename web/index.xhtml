@@ -1,12 +1,89 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
-    <h:head>
-        <title>Facelet Title</title>
-    </h:head>
-    <h:body>
-        Hello from Facelets
-    </h:body>
-</html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                template="/template.xhtml">
+    <ui:define name="body">
+        <div id="index-banner" class="parallax-container">
+            <div class="section no-pad-bot">
+                <div class="container">
+                    <br/><br/>
+                    <h1 class="header center teal-text text-lighten-2">Vis'it!</h1>
+                    <div class="row center">
+                        <h5 class="header col s12 light">Découvrez des lieux fascinants découvert par d'autres voyageurs!</h5>
+                    </div>
+                    <div class="row center">
+                        <h:link id="download-button" class="btn-large waves-effect waves-light teal lighten-1" outcome="/pages/places/List" value="Découvrir"/>
+                    </div>
+                    <br/><br/>
+                </div>
+            </div>
 
+            <div class="parallax"><h:graphicImage value="resources/images/test3.jpg" /></div>
+        </div>
+
+        <div class="container">
+            <div class="section">
+                <!--   Icon Section   -->
+                <div class="row">
+                    <div class="col s12 m4">
+                        <div class="icon-block">
+                            <h2 class="center brown-text"><i class="material-icons">flash_on</i></h2>
+                            <h5 class="center">Nouveaux lieux chaque jour</h5>
+                            <p class="light">Vous ne savez pas où vous promener? Découvrez les lieux proposés par d'autres utilisateurs!</p>
+                        </div>
+                    </div>
+
+                    <div class="col s12 m4">
+                        <div class="icon-block">
+                            <h2 class="center brown-text"><i class="material-icons">group</i></h2>
+                            <h5 class="center">Faites découvrir vos lieux préférés</h5>
+                            <p class="light">En vous inscrivant sur le site, vous pouvez ajouter vos lieux préférés! D'autres voyageurs vous remercieront.</p>
+                        </div>
+                    </div>
+
+                    <div class="col s12 m4">
+                        <div class="icon-block">
+                            <h2 class="center brown-text"><i class="material-icons">settings</i></h2>
+                            <h5 class="center">Lieux controlés</h5>
+                            <p class="light">Vous avez peur que le lieu proposé n'est pas visitable? Chaque lieu indiqué sur le site est validé par des administrateurs qui eux-même sont allé le visiter.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="parallax-container valign-wrapper">
+            <div class="section no-pad-bot">
+                <div class="container">
+                    <div class="row center">
+                        <h5 class="header col s12 light">Participez à la communauté et donnez votre avis sur les lieux.</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="parallax"><h:graphicImage value="resources/images/home-collaborate.jpg" /></div>
+        </div>
+
+        <div class="container">
+            <div class="section">
+                <div class="row">
+                    <div class="col s12 center">
+                        <h3><i class="mdi-content-send brown-text"></i></h3>
+                        <h4>Nous contacter</h4>
+                        <p class="left-align light">Des questions à propos du site? Vous pouvez tout simplement nous contacter via ce lien. </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="parallax-container valign-wrapper">
+            <div class="section no-pad-bot">
+                <div class="container">
+                    <div class="row center">
+                        <h5 class="header col s12 light">Voyager, c'est grandir. C'est la grande aventure. Celle qui laisse des traces dans l'âme.</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="parallax"><h:graphicImage value="resources/images/home-end.jpg" /></div>
+        </div>
+    </ui:define>
+</ui:composition>

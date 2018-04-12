@@ -1,0 +1,86 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template.xhtml">
+    <ui:define name="title">
+        <h:outputText value="#{bundle.ListPlacesTitle}"></h:outputText>
+    </ui:define>
+    <ui:define name="body">
+        <div class="container maxHeight">
+            <h2>Les lieux</h2>
+            <h:form styleClass="jsfcrud_list_form">
+                <h:panelGroup id="messagePanel" layout="block">
+                    <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+                </h:panelGroup>
+                <h:outputText escape="false" value="#{bundle.ListPlacesEmpty}" rendered="#{placesController.items.rowCount == 0}"/>
+                <h:panelGroup rendered="#{placesController.items.rowCount > 0}">
+                    <h:outputText value="#{placesController.pagination.pageFirstItem + 1}..#{placesController.pagination.pageLastItem + 1}/#{placesController.pagination.itemsCount}"/>
+                    <h:commandLink action="#{placesController.previous}" value="#{bundle.Previous} #{placesController.pagination.pageSize}" rendered="#{placesController.pagination.hasPreviousPage}"/>
+                    <h:commandLink action="#{placesController.next}" value="#{bundle.Next} #{placesController.pagination.pageSize}" rendered="#{placesController.pagination.hasNextPage}"/>
+                    <h:dataTable value="#{placesController.items}" var="item" border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px">
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListPlacesTitle_published_date}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.published_date}">
+                                <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
+                            </h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListPlacesTitle_published_by}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.published_by}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListPlacesTitle_title}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.title}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListPlacesTitle_latitude}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.latitude}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListPlacesTitle_longitude}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.longitude}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListPlacesTitle_description}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.description}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListPlacesTitle_id}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.id}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value=""/>
+                            </f:facet>
+                            <h:commandLink action="#{placesController.prepareView}" value="#{bundle.ListPlacesViewLink}"/>
+                            <h:outputText value=" "/>
+                            <h:commandLink action="#{placesController.prepareEdit}" value="#{bundle.ListPlacesEditLink}"/>
+                            <h:outputText value=" "/>
+                            <h:commandLink action="#{placesController.destroy}" value="#{bundle.ListPlacesDestroyLink}"/>
+                        </h:column>
+                    </h:dataTable>
+                </h:panelGroup>
+                <br />
+                <h:commandLink action="#{placesController.prepareCreate}" value="#{bundle.ListPlacesCreateLink}"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.ListPlacesIndexLink}"/>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,27 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                template="/template.xhtml">
+    <ui:define name="body">
+        <div class="container maxHeight">
+            <h2>Se connecter</h2>
+            <h:form id="login_form">
+                <h:messages globalOnly="true"/>
+                <table columns="2" role="presentation"> 
+                    <tr>
+                        <td><h:outputLabel value="Nom d'utilisateur:"/></td>
+                        <td><h:inputText required="true" value="#{authentificationBean.username}"/></td>
+                    </tr>
+                    <tr>
+                        <td><h:outputLabel value="Mot de passe:"/></td>
+                        <td><h:inputSecret required="true" value="#{authentificationBean.password}" /></td>
+                    </tr>
+                </table>
+                <p>
+                    <h:commandButton type="submit" value="Se connecter" action="#{authentificationBean.login()}"/>
+                    <h:commandButton type="reset" value="Effacer"/>
+                </p>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

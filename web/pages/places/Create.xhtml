@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <ui:define name="title">
+        <h:outputText value="#{bundle.ListPlacesTitle}"></h:outputText>
+    </ui:define>
+    <ui:define name="body">
+        <div class="container maxHeight">
+            <h2>Ajouter un lieu</h2>
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.CreatePlacesLabel_published_by}" for="published_by" />
+                    <h:selectOneMenu id="published_by" value="#{placesController.selected.published_by}" title="#{bundle.CreatePlacesTitle_published_by}" >
+                        <f:selectItems value="#{usersController.itemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputLabel value="#{bundle.CreatePlacesLabel_title}" for="title" />
+                    <h:inputText id="title" value="#{placesController.selected.title}" title="#{bundle.CreatePlacesTitle_title}" required="true" requiredMessage="#{bundle.CreatePlacesRequiredMessage_title}"/>
+                    <h:outputLabel value="#{bundle.CreatePlacesLabel_latitude}" for="latitude" />
+                    <h:inputText id="latitude" value="#{placesController.selected.latitude}" title="#{bundle.CreatePlacesTitle_latitude}" required="true" requiredMessage="#{bundle.CreatePlacesRequiredMessage_latitude}"/>
+                    <h:outputLabel value="#{bundle.CreatePlacesLabel_longitude}" for="longitude" />
+                    <h:inputText id="longitude" value="#{placesController.selected.longitude}" title="#{bundle.CreatePlacesTitle_longitude}" required="true" requiredMessage="#{bundle.CreatePlacesRequiredMessage_longitude}"/>
+                    <h:outputLabel value="#{bundle.CreatePlacesLabel_description}" for="description" />
+                    <h:inputText id="description" value="#{placesController.selected.description}" title="#{bundle.CreatePlacesTitle_description}" />
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{placesController.create}" value="#{bundle.CreatePlacesSaveLink}" />
+                <br />
+                <br />
+                <h:commandLink action="#{placesController.prepareList}" value="#{bundle.CreatePlacesShowAllLink}" immediate="true"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.CreatePlacesIndexLink}"/>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>
