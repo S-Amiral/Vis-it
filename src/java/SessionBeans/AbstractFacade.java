@@ -63,16 +63,6 @@ public abstract class AbstractFacade<T> {
         return q.getResultList();
     }
 
-    public List<T> findRange(String published_by, int[] range) {
-        /*CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery cq = cb.createQuery();
-        cq.select(cq.from(Places.class));
-        Root<Places> places = cq.from(Places.class);
-        Join<Places, Users> username = places.join("published_by");
-        cq.where(cb.like(places.<String>get(Places_.published_by), published_by));
-        return getEntityManager().createQuery(cq).getResultList();*/
-    }
-
     public int count() {
         javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
         javax.persistence.criteria.Root<T> rt = cq.from(entityClass);

@@ -38,7 +38,7 @@
                             </h:panelGroup>
                             <li>
                                 <h:form rendered="#{not empty request.remoteUser}">
-                                    <h:commandLink value="Déconnection" action="#{authentificationBean.logout}"/>
+                                    <h:commandLink value="Déconnection" action="#{usersController.logout}"/>
                                 </h:form>
                             </li>
                         </ul>

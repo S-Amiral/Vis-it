@@ -4,7 +4,6 @@ import Entities.Places;
 import JSF.util.JsfUtil;
 import JSF.util.PaginationHelper;
 import SessionBeans.PlacesFacade;
-import com.sun.xml.registry.common.util.Utility;
 
 import java.io.Serializable;
 import java.util.ResourceBundle;
@@ -12,7 +11,6 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.annotation.ManagedProperty;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -20,35 +18,24 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 @Named("placesController")
 @SessionScoped
 public class PlacesController implements Serializable {
 
+    private boolean isInFullItems = false;
+    private boolean isInMyItems = false;
     private Places current;
     private DataModel items = null;
+    private DataModel myItems = null;
+
     @EJB
     private SessionBeans.PlacesFacade ejbFacade;
+    @EJB
+    private SessionBeans.UsersFacade userEjbFacade;
     private PaginationHelper pagination;
+
     private int selectedItemIndex;
-
-    @ManagedProperty(value = "#{usersController}")
-    private UsersController usersController;
-
-    public UsersController getUsersController() {
-        return usersController;
-    }
-
-    public void setUsersController(UsersController usersController) {
-        this.usersController = usersController;
-    }
-
-    @PostConstruct
-    public void init() {
-        usersController = new UsersController();
-    }
 
     public PlacesController() {
     }
@@ -66,7 +53,7 @@ public class PlacesController implements Serializable {
     }
 
     public PaginationHelper getPagination() {
-        if (pagination == null) {
+        if (pagination == null || isInMyItems) {
             pagination = new PaginationHelper(10) {
 
                 @Override
@@ -76,28 +63,33 @@ public class PlacesController implements Serializable {
 
                 @Override
                 public DataModel createPageDataModel() {
-                    return new ListDataModel(getFacade().findRange(new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                    DataModel dataModel = new ListDataModel(getFacade().findRange(new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                    //this.setNumberOfPage(getFacade().count());
+                    return dataModel;
                 }
             };
+            isInMyItems = false;
         }
         return pagination;
     }
 
     public PaginationHelper getPagination(String publisher) {
-        if (pagination == null) {
+        if (pagination == null || isInFullItems) {
             pagination = new PaginationHelper(10) {
 
                 @Override
                 public int getItemsCount() {
-                    return getFacade().count();
+                    return getFacade().count(publisher);
                 }
 
                 @Override
                 public DataModel createPageDataModel() {
-
-                    return new ListDataModel(getFacade().findRange(publisher, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                    DataModel dataModel = new ListDataModel(getFacade().findRange(publisher, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                    //this.setNumberOfPage((getFacade().countItems(publisher)));
+                    return dataModel;
                 }
             };
+            isInFullItems = false;
         }
         return pagination;
     }
@@ -120,15 +112,8 @@ public class PlacesController implements Serializable {
     }
 
     public String create() {
-        //usersController.getUsers("angelkiro");
-        /*usersController = new UsersController();
-        usersController.getSelected();
-        usersController.getUsers("angelkiro");
-        System.out.println("Debug:" + usersController.getSelected());*/
         try {
-            //current.setPublished_by(usersController.getSelected());
-            //System.out.println(usersController.getSelected());
-            //.setPublished_by(FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal().getName());
+            current.setPublished_by(userEjbFacade.find(FacesContext.getCurrentInstance().getExternalContext().getRemoteUser()));
             getFacade().create(current);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("PlacesCreated"));
             return prepareCreate();
@@ -201,17 +186,21 @@ public class PlacesController implements Serializable {
         }
     }
 
-    public DataModel getItemsByPublisher(String publisher) {
-        if (items == null) {
-            items = getPagination(publisher).createPageDataModel();
-        }
-        return items;
-    }
-
     public DataModel getItems() {
+        isInFullItems = true;
         if (items == null) {
             items = getPagination().createPageDataModel();
         }
+        //numberOfPages = getFacade().countItems() / getPagination().getPageSize();
+        return items;
+    }
+
+    public DataModel getMyItems() {
+        isInMyItems = true;
+        if (items == null) {
+            items = getPagination(FacesContext.getCurrentInstance().getExternalContext().getRemoteUser()).createPageDataModel();
+        }
+        //numberOfPages = getFacade().countItems() / getPagination().getPageSize();
         return items;
     }
 
@@ -223,16 +212,40 @@ public class PlacesController implements Serializable {
         pagination = null;
     }
 
+    public String page(int page) {
+        getPagination().setPage(page - 1);
+        recreateModel();
+        return "List";
+    }
+
+    public String page(int page, String publisher) {
+        getPagination(publisher).setPage(page - 1);
+        recreateModel();
+        return "MyPlaces";
+    }
+
     public String next() {
         getPagination().nextPage();
         recreateModel();
         return "List";
     }
 
+    public String next(String publisher) {
+        getPagination(publisher).nextPage();
+        recreateModel();
+        return "MyPlaces";
+    }
+
     public String previous() {
         getPagination().previousPage();
         recreateModel();
         return "List";
+    }
+
+    public String previous(String publisher) {
+        getPagination(publisher).previousPage();
+        recreateModel();
+        return "MyPlaces";
     }
 
     public SelectItem[] getItemsAvailableSelectMany() {
@@ -284,7 +297,10 @@ public class PlacesController implements Serializable {
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Places.class.getName());
             }
         }
-
     }
 
+    public int getNumberOfPages() {
+        System.out.println("GetNumberOfPages: " + getFacade().countItems() / getPagination().getPageSize());
+        return getFacade().countItems() / getPagination().getPageSize();
+    }
 }

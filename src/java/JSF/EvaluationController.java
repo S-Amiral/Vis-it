@@ -1,17 +1,15 @@
 package JSF;
 
-import Entities.Users;
+import Entities.Evaluation;
 import JSF.util.JsfUtil;
 import JSF.util.PaginationHelper;
-import SessionBeans.UsersFacade;
+import SessionBeans.EvaluationFacade;
 
 import java.io.Serializable;
 import java.util.ResourceBundle;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.annotation.ManagedProperty;
-import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -19,60 +17,30 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
-@Named("usersController")
+@Named("evaluationController")
 @SessionScoped
-public class UsersController implements Serializable {
+public class EvaluationController implements Serializable {
 
-    private Users userLogged;
-    private String usernameLogin;
-    private String passwordLogin;
-
-    public String getUsernameLogin() {
-        return usernameLogin;
-    }
-
-    public void setUsernameLogin(String usernameLogin) {
-        this.usernameLogin = usernameLogin;
-    }
-
-    public String getPasswordLogin() {
-        return passwordLogin;
-    }
-
-    public void setPasswordLogin(String passwordLogin) {
-        this.passwordLogin = passwordLogin;
-    }
-
-    public Users getUserLogged() {
-        return userLogged;
-    }
-
-    public void setUserLogged(Users userLogged) {
-        this.userLogged = userLogged;
-    }
-    private Users current;
+    private Evaluation current;
     private DataModel items = null;
     @EJB
-    private SessionBeans.UsersFacade ejbFacade;
+    private SessionBeans.EvaluationFacade ejbFacade;
     private PaginationHelper pagination;
     private int selectedItemIndex;
 
-    public UsersController() {
+    public EvaluationController() {
     }
 
-    public Users getSelected() {
+    public Evaluation getSelected() {
         if (current == null) {
-            current = new Users();
+            current = new Evaluation();
             selectedItemIndex = -1;
         }
         return current;
     }
 
-    private UsersFacade getFacade() {
+    private EvaluationFacade getFacade() {
         return ejbFacade;
     }
 
@@ -100,13 +68,13 @@ public class UsersController implements Serializable {
     }
 
     public String prepareView() {
-        current = (Users) getItems().getRowData();
+        current = (Evaluation) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return "View";
     }
 
     public String prepareCreate() {
-        current = new Users();
+        current = new Evaluation();
         selectedItemIndex = -1;
         return "Create";
     }
@@ -114,7 +82,7 @@ public class UsersController implements Serializable {
     public String create() {
         try {
             getFacade().create(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsersCreated"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EvaluationCreated"));
             return prepareCreate();
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
@@ -123,7 +91,7 @@ public class UsersController implements Serializable {
     }
 
     public String prepareEdit() {
-        current = (Users) getItems().getRowData();
+        current = (Evaluation) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return "Edit";
     }
@@ -131,7 +99,7 @@ public class UsersController implements Serializable {
     public String update() {
         try {
             getFacade().edit(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsersUpdated"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EvaluationUpdated"));
             return "View";
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
@@ -140,7 +108,7 @@ public class UsersController implements Serializable {
     }
 
     public String destroy() {
-        current = (Users) getItems().getRowData();
+        current = (Evaluation) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         performDestroy();
         recreatePagination();
@@ -164,7 +132,7 @@ public class UsersController implements Serializable {
     private void performDestroy() {
         try {
             getFacade().remove(current);
-            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsersDeleted"));
+            JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("EvaluationDeleted"));
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
         }
@@ -220,65 +188,30 @@ public class UsersController implements Serializable {
         return JsfUtil.getSelectItems(ejbFacade.findAll(), true);
     }
 
-    public Users getUsers(java.lang.String id) {
+    public Evaluation getEvaluation(java.lang.Long id) {
         return ejbFacade.find(id);
     }
 
-    public String login() {
-        String page = "/index?faces-redirect=true";
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-        try {
-            request.login(usernameLogin, passwordLogin);
-            userLogged = getUsers(usernameLogin);
-            HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
-            System.out.println(session.getId());
-            session.setAttribute("userLogged", userLogged);
-            /*session.setAttribute("username", usernameLogin);
-            System.out.println("AuthentificationBeans : Login requested");*/
-        } catch (ServletException e) {
-            e.printStackTrace();
-            context.addMessage(null, new FacesMessage("Votre email/mot de passe est incorrect"));
-            page = "/login?faces-redirect=true";
-        }
-        return page;
-    }
-
-    public String logout() {
-        String page = "/index?faces-redirect=true";
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-        HttpSession session = (HttpSession) context.getExternalContext().getSession(true);
-
-        try {
-            session.invalidate();
-            request.logout();
-        } catch (ServletException e) {
-            e.printStackTrace();
-        }
-        return page;
-    }
-
-    @FacesConverter(forClass = Users.class)
-    public static class UsersControllerConverter implements Converter {
+    @FacesConverter(forClass = Evaluation.class)
+    public static class EvaluationControllerConverter implements Converter {
 
         @Override
         public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
             if (value == null || value.length() == 0) {
                 return null;
             }
-            UsersController controller = (UsersController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "usersController");
-            return controller.getUsers(getKey(value));
+            EvaluationController controller = (EvaluationController) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "evaluationController");
+            return controller.getEvaluation(getKey(value));
         }
 
-        java.lang.String getKey(String value) {
-            java.lang.String key;
-            key = value;
+        java.lang.Long getKey(String value) {
+            java.lang.Long key;
+            key = Long.valueOf(value);
             return key;
         }
 
-        String getStringKey(java.lang.String value) {
+        String getStringKey(java.lang.Long value) {
             StringBuilder sb = new StringBuilder();
             sb.append(value);
             return sb.toString();
@@ -289,11 +222,11 @@ public class UsersController implements Serializable {
             if (object == null) {
                 return null;
             }
-            if (object instanceof Users) {
-                Users o = (Users) object;
-                return getStringKey(o.getUsername());
+            if (object instanceof Evaluation) {
+                Evaluation o = (Evaluation) object;
+                return getStringKey(o.getId());
             } else {
-                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Users.class.getName());
+                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Evaluation.class.getName());
             }
         }
 

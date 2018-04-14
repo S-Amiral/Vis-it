@@ -10,15 +10,15 @@
                 <table columns="2" role="presentation"> 
                     <tr>
                         <td><h:outputLabel value="Nom d'utilisateur:"/></td>
-                        <td><h:inputText required="true" value="#{authentificationBean.username}"/></td>
+                        <td><h:inputText required="true" value="#{usersController.usernameLogin}"/></td>
                     </tr>
                     <tr>
                         <td><h:outputLabel value="Mot de passe:"/></td>
-                        <td><h:inputSecret required="true" value="#{authentificationBean.password}" /></td>
+                        <td><h:inputSecret required="true" value="#{usersController.passwordLogin}" /></td>
                     </tr>
                 </table>
                 <p>
-                    <h:commandButton type="submit" value="Se connecter" action="#{authentificationBean.login()}"/>
+                    <h:commandButton type="submit" value="Se connecter" action="#{usersController.login()}"/>
                     <h:commandButton type="reset" value="Effacer"/>
                 </p>
             </h:form>

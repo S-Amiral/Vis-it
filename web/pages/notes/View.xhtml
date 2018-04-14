@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ViewEvaluationTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputText value="#{bundle.ViewEvaluationLabel_evaluated_by}"/>
+                    <h:outputText value="#{evaluationController.selected.evaluated_by}" title="#{bundle.ViewEvaluationTitle_evaluated_by}"/>
+                    <h:outputText value="#{bundle.ViewEvaluationLabel_place_evaluated}"/>
+                    <h:outputText value="#{evaluationController.selected.place_evaluated}" title="#{bundle.ViewEvaluationTitle_place_evaluated}"/>
+                    <h:outputText value="#{bundle.ViewEvaluationLabel_score}"/>
+                    <h:outputText value="#{evaluationController.selected.score}" title="#{bundle.ViewEvaluationTitle_score}"/>
+                    <h:outputText value="#{bundle.ViewEvaluationLabel_id}"/>
+                    <h:outputText value="#{evaluationController.selected.id}" title="#{bundle.ViewEvaluationTitle_id}"/>
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{evaluationController.destroyAndView}" value="#{bundle.ViewEvaluationDestroyLink}"/>
+                <br />
+                <br />
+                <h:link outcome="Edit" value="#{bundle.ViewEvaluationEditLink}"/>
+                <br />
+                <h:commandLink action="#{evaluationController.prepareCreate}" value="#{bundle.ViewEvaluationCreateLink}" />
+                <br />
+                <h:commandLink action="#{evaluationController.prepareList}" value="#{bundle.ViewEvaluationShowAllLink}"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundle.ViewEvaluationIndexLink}"/>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>
