@@ -101,7 +101,7 @@
                             </c:choose>
                         </c:forEach>
                         <c:choose>                                
-                            <c:when test="#{placesController.pagination.hasNextPage}">
+                            <c:when test="#{placesController.pagination.pageSize lt i}">
                                 <li class="waves-effect">
                                     <h:commandLink action="#{placesController.next}">
                                         <i class="material-icons">chevron_right</i>

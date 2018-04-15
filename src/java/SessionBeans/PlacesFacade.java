@@ -138,12 +138,21 @@ public class PlacesFacade extends AbstractFacade<Places> {
         CriteriaQuery c = cb.createQuery(Places.class);
         Root<Places> m = c.from(Places.class);
         c.select(m);
-        c.where(cb.equal(m.get(Places_.isValidate), false));
-        c.where(cb.like(m.get(Places_.title), "%"+textToFind+"%"));
+        c.where(cb.equal(m.get(Places_.isValidate), true),cb.like(m.get(Places_.title), "%" + textToFind + "%"));
         Query q = em.createQuery(c);
         q.setMaxResults(10);
         q.setFirstResult(0);
         return q.getResultList();
+    }
+
+    public int countItems(String textToFind) {
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        Root<Places> rt = criteriaQuery.from(Places.class);
+        criteriaQuery.select(criteriaBuilder.count(rt));
+        criteriaQuery.where(criteriaBuilder.equal(rt.get(Places_.isValidate), true),criteriaBuilder.like(rt.get(Places_.title), "%" + textToFind + "%"));
+        Query q = em.createQuery(criteriaQuery);
+        return ((Long) q.getSingleResult()).intValue();
     }
 
 }

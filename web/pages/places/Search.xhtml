@@ -13,7 +13,7 @@
             Recherche: 
             <h:form class="center">
                 <h:inputText value="#{searchManagedBean.textToFind}"></h:inputText>
-                <h:commandButton value="Rechercher"></h:commandButton>
+                <h:commandButton value="Rechercher" action="#{searchManagedBean.newSearch}"></h:commandButton>
             </h:form>
             Résultat pour la recherche: #{searchManagedBean.textToFind}
             <br/><br/>
@@ -67,15 +67,59 @@
                             <f:facet name="header">
                                 <h:outputText value=""/>
                             </f:facet>
-                            <h:commandLink action="#{placesController.prepareView}" value="#{bundle.ListPlacesViewLink}" class="btn waves-effect waves-light">
+                            <h:commandLink  value="#{bundle.ListPlacesViewLink}" class="btn waves-effect waves-light">
                                 <i class="material-icons left">visibility</i>
                             </h:commandLink>
                             <h:outputText value=" "/>
                         </h:column>
                     </h:dataTable>
+                    <!-- Pagination -->
+                    <br/>
+                    <ul class="pagination center-align" >
+                        <c:choose>                                
+                            <c:when test="#{searchManagedBean.pagination.page == 0}">
+                                <li class="disabled">
+                                    <a href="#!"><i class="material-icons">chevron_left</i></a>
+                                </li>
+                            </c:when>
+                            <c:otherwise>
+                                <li class="waves-effect">
+                                    <h:commandLink action="#{searchManagedBean.previous}">
+                                        <i class="material-icons">chevron_left</i>
+                                    </h:commandLink>
+                                </li>
+                            </c:otherwise>
+                        </c:choose>
+                        <c:forEach begin="1" end="#{searchManagedBean.numberOfPages}" var="i">
+                            <c:choose>                                
+                                <c:when test="#{searchManagedBean.pagination.page +1 == i}">
+                                    <li class="active"><a href="#!">#{i}</a></li>
+                                </c:when>
+                                <c:otherwise>
+                                    <li class="waves-effect">
+                                        <h:commandLink action="#{searchManagedBean.page(i)}" value="#{i}"/>
+                                    </li>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:forEach>
+                        <c:choose>                                
+                            <c:when test="#{searchManagedBean.pagination.pageSize lt i}">
+                                <li class="waves-effect">
+                                    <h:commandLink action="#{searchManagedBean.next}">
+                                        <i class="material-icons">chevron_right</i>
+                                    </h:commandLink>
+                                </li>
+                            </c:when>
+                            <c:otherwise>
+                                <li class="disabled">
+                                    <a href="#!"><i class="material-icons">chevron_right</i></a>
+                                </li>
+                            </c:otherwise>
+                        </c:choose>
+                    </ul>
                 </h:panelGroup>
                 <br />
-                <h:commandLink action="#{placesController.prepareCreate}" value="#{bundle.ListPlacesCreateLink}" rendered="#{not empty request.remoteUser}" class="waves-effect waves-light btn-large right">
+                <h:commandLink action="#{searchManagedBean.prepareCreate}" value="#{bundle.ListPlacesCreateLink}" rendered="#{not empty request.remoteUser}" class="waves-effect waves-light btn-large right">
                     <i class="material-icons left">add_circle_outline</i>
                 </h:commandLink>
                 <br/>

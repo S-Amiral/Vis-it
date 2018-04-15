@@ -91,21 +91,6 @@ public class PlacesController implements Serializable {
                         }
                     };
                     break;
-                case SEARCH:
-                    pagination = new PaginationHelper(10) {
-
-                        @Override
-                        public int getItemsCount() {
-                            return getFacade().count(option);
-                        }
-
-                        @Override
-                        public DataModel createPageDataModel() {
-                            DataModel dataModel = new ListDataModel(getFacade().findRange(option, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
-                            return dataModel;
-                        }
-                    };
-                    break;
                 default:
                     return pagination;
 
