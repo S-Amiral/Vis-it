@@ -33,7 +33,7 @@
                             </h:panelGroup>
                             <h:panelGroup rendered="#{request.isUserInRole('admin') || request.isUserInRole('moderator')}">
                                 <li>
-                                    <h:link value="Validations" outcome="/pages/moderator/Validation.xhtml"/>
+                                    <h:link value="Validations" outcome="/pages/places/Validation.xhtml"/>
                                 </li>
                             </h:panelGroup>
                             <h:panelGroup rendered="#{not empty request.remoteUser}">

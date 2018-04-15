@@ -9,6 +9,7 @@ import Entities.Places;
 import Entities.Places_;
 import Entities.Users;
 import Entities.Users_;
+import JSF.PlacesController;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -64,17 +65,29 @@ public class PlacesFacade extends AbstractFacade<Places> {
         CriteriaQuery c = cb.createQuery(Places.class);
         Root<Places> m = c.from(Places.class);
         c.select(m);
-        c.where(cb.equal(m.get(Places_.isValidate), false));
+        c.where(cb.equal(m.get(Places_.isValidate), true));
         Query q = em.createQuery(c);
         q.setMaxResults(range[1] - range[0] + 1);
         q.setFirstResult(range[0]);
         return q.getResultList();
-        /*javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
-        cq.select(cq.from(Places.class));
-        javax.persistence.Query q = getEntityManager().createQuery(cq);
-        q.setMaxResults(range[1] - range[0] + 1);
-        q.setFirstResult(range[0]);
-        return q.getResultList();*/
+    }
+
+    public List<Places> findRange(int option, int[] range) {
+        switch (option) {
+            case PlacesController.VALIDATION:
+                CriteriaBuilder cb = em.getCriteriaBuilder();
+                CriteriaQuery c = cb.createQuery(Places.class);
+                Root<Places> m = c.from(Places.class);
+                c.select(m);
+                c.where(cb.equal(m.get(Places_.isValidate), false));
+                Query q = em.createQuery(c);
+                q.setMaxResults(range[1] - range[0] + 1);
+                q.setFirstResult(range[0]);
+                return q.getResultList();
+            default:
+                return null;
+        }
+
     }
 
     public int count(String publisher) {
@@ -100,8 +113,24 @@ public class PlacesFacade extends AbstractFacade<Places> {
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Places> rt = criteriaQuery.from(Places.class);
         criteriaQuery.select(criteriaBuilder.count(rt));
+        criteriaQuery.where(criteriaBuilder.equal(rt.get(Places_.isValidate), true));
         Query q = em.createQuery(criteriaQuery);
         return ((Long) q.getSingleResult()).intValue();
+    }
+
+    public int count(int option) {
+        switch (option) {
+            case 1:
+                CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+                CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+                Root<Places> rt = criteriaQuery.from(Places.class);
+                criteriaQuery.select(criteriaBuilder.count(rt));
+                criteriaQuery.where(criteriaBuilder.equal(rt.get(Places_.isValidate), false));
+                Query q = em.createQuery(criteriaQuery);
+                return ((Long) q.getSingleResult()).intValue();
+            default:
+                return 0;
+        }
     }
 
 }

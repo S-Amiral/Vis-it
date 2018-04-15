@@ -7,7 +7,6 @@ import SessionBeans.PlacesFacade;
 
 import java.io.Serializable;
 import java.util.ResourceBundle;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -18,7 +17,6 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
-import javax.persistence.PrePersist;
 
 @Named("placesController")
 @SessionScoped
@@ -29,7 +27,7 @@ public class PlacesController implements Serializable {
     private boolean isInValidationItems = false;
     private Places current;
     private DataModel items = null;
-    private DataModel myItems = null;
+    public static final int VALIDATION = 1;
 
     @EJB
     private SessionBeans.PlacesFacade ejbFacade;
@@ -73,6 +71,25 @@ public class PlacesController implements Serializable {
         return pagination;
     }
 
+    public PaginationHelper getPagination(int option) {
+        if (pagination == null || isInMyItems || isInFullItems) {
+            pagination = new PaginationHelper(10) {
+
+                @Override
+                public int getItemsCount() {
+                    return getFacade().count(option);
+                }
+
+                @Override
+                public DataModel createPageDataModel() {
+                    DataModel dataModel = new ListDataModel(getFacade().findRange(option, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                    return dataModel;
+                }
+            };
+        }
+        return pagination;
+    }
+
     public PaginationHelper getPagination(String publisher) {
         if (pagination == null || isInFullItems || isInValidationItems) {
             pagination = new PaginationHelper(10) {
@@ -100,6 +117,12 @@ public class PlacesController implements Serializable {
     public String prepareView() {
         current = (Places) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
+        return "View";
+    }
+
+    public String prepareValidationView() {
+        current = (Places) getValidationItems().getRowData();
+        selectedItemIndex = pagination.getPageFirstItem() + getValidationItems().getRowIndex();
         return "View";
     }
 
@@ -133,6 +156,27 @@ public class PlacesController implements Serializable {
         return "Edit";
     }
 
+    public String prepareValidationEdit() {
+        current = (Places) getValidationItems().getRowData();
+        selectedItemIndex = pagination.getPageFirstItem() + getValidationItems().getRowIndex();
+        return "Edit";
+    }
+
+    public String validatePlace() {
+        current = (Places) getValidationItems().getRowData();
+        current.setIsValidate(true);
+        try {
+            getFacade().edit(current);
+            JsfUtil.addSuccessMessage("Le lieu a été approuvé!");
+            recreatePagination();
+            recreateModel();
+            return "Validation";
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+            return null;
+        }
+    }
+
     public String prepareMyItemsEdit() {
         current = (Places) getMyItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getMyItems().getRowIndex();
@@ -159,13 +203,22 @@ public class PlacesController implements Serializable {
         return "List";
     }
 
+    public String destroyValidationItems() {
+        current = (Places) getValidationItems().getRowData();
+        selectedItemIndex = pagination.getPageFirstItem() + getValidationItems().getRowIndex();
+        performDestroy();
+        recreatePagination();
+        recreateModel();
+        return "Validation";
+    }
+
     public String destroyMyItems() {
         current = (Places) getMyItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getMyItems().getRowIndex();
         performDestroy();
         recreatePagination();
         recreateModel();
-        return "List";
+        return "MyPlaces";
     }
 
     public String destroyAndView() {
@@ -228,7 +281,7 @@ public class PlacesController implements Serializable {
     public DataModel getValidationItems() {
         isInValidationItems = true;
         if (items == null || isInMyItems || isInFullItems) {
-            items = getPagination().createPageDataModel();
+            items = getPagination(VALIDATION).createPageDataModel();
             isInMyItems = false;
             isInFullItems = false;
         }
@@ -255,6 +308,12 @@ public class PlacesController implements Serializable {
         return "MyPlaces";
     }
 
+    public String page(int page, int option) {
+        getPagination(option).setPage(page - 1);
+        recreateModel();
+        return "Validation";
+    }
+
     public String next() {
         getPagination().nextPage();
         recreateModel();
@@ -267,6 +326,12 @@ public class PlacesController implements Serializable {
         return "MyPlaces";
     }
 
+    public String next(int option) {
+        getPagination(option).nextPage();
+        recreateModel();
+        return "Validation";
+    }
+
     public String previous() {
         getPagination().previousPage();
         recreateModel();
@@ -277,6 +342,12 @@ public class PlacesController implements Serializable {
         getPagination(publisher).previousPage();
         recreateModel();
         return "MyPlaces";
+    }
+
+    public String previous(int option) {
+        getPagination(option).previousPage();
+        recreateModel();
+        return "Validation";
     }
 
     public SelectItem[] getItemsAvailableSelectMany() {
@@ -331,12 +402,14 @@ public class PlacesController implements Serializable {
     }
 
     public int getNumberOfPages() {
-        System.out.println("GetNumberOfPages: " + getFacade().countItems() + "/" + getPagination().getPageSize() + " Number of Page:" + (int) Math.ceil(getFacade().countItems() / (double) (getPagination().getPageSize())));
         return (int) Math.ceil(getFacade().countItems() / (double) (getPagination().getPageSize()));
     }
 
     public int getNumberOfPages(String publisher) {
-        System.out.println("GetNumberOfPages: " + getFacade().countItems() / getPagination(publisher).getPageSize());
         return (int) Math.ceil(getFacade().count(publisher) / (double) getPagination(publisher).getPageSize());
+    }
+
+    public int getNumberOfPages(int option) {
+        return (int) Math.ceil(getFacade().count(option) / (double) getPagination(option).getPageSize());
     }
 }

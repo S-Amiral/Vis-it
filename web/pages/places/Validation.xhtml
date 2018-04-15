@@ -4,44 +4,41 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:c="http://java.sun.com/jsp/jstl/core"
                 template="/template.xhtml">
-    <ui:define name="title">
-        <h:outputText value="#{bundle.ListPlacesTitle}"></h:outputText>
-    </ui:define>
     <ui:define name="body">
         <div class="container maxHeight">
-            <h2>Les lieux</h2>
+            <h2>Validation des lieux</h2>
             <h:form styleClass="jsfcrud_list_form">
                 <h:panelGroup id="messagePanel" layout="block">
                     <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
                 </h:panelGroup>
-                <h:outputText escape="false" value="#{bundle.ListPlacesEmpty}" rendered="#{placesController.items.rowCount == 0}"/>
-                <h:panelGroup rendered="#{placesController.items.rowCount > 0}">
-                    <h:dataTable value="#{placesController.items}" var="item" border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px">
-                        <h:column>
+                <h:outputText escape="false" value="#{bundle.ListPlacesEmpty}" rendered="#{placesController.validationItems.rowCount == 0}"/>
+                <h:panelGroup rendered="#{placesController.validationItems.rowCount > 0}">
+                    <h:dataTable value="#{placesController.validationItems}" var="item" border="0" cellpadding="2" cellspacing="0" rules="all" headerClass="center-align">
+                        <h:column class="center-align">
                             <f:facet name="header">
                                 <h:outputText value="#{bundle.ListPlacesTitle_title}"/>
                             </f:facet>
                             <h:outputText value="#{item.title}"/>
                         </h:column>
-                        <h:column>
+                        <h:column class="center-align">
                             <f:facet name="header">
                                 <h:outputText value="#{bundle.ListPlacesTitle_description}"/>
                             </f:facet>
                             <h:outputText value="#{item.description}"/>
                         </h:column>
-                        <h:column>
+                        <h:column class="center-align">
                             <f:facet name="header">
                                 <h:outputText value="#{bundle.ListPlacesTitle_latitude}"/>
                             </f:facet>
                             <h:outputText value="#{item.latitude}"/>
                         </h:column>
-                        <h:column>
+                        <h:column class="center-align">
                             <f:facet name="header">
                                 <h:outputText value="#{bundle.ListPlacesTitle_longitude}"/>
                             </f:facet>
                             <h:outputText value="#{item.longitude}"/>
                         </h:column>
-                        <h:column>
+                        <h:column class="center-align">
                             <f:facet name="header">
                                 <h:outputText value="#{bundle.ListPlacesTitle_published_date}"/>
                             </f:facet>
@@ -49,55 +46,55 @@
                                 <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
                             </h:outputText>
                         </h:column>
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListPlacesTitle_published_by}"/>
+                        <h:column class="center-align">
+                            <f:facet name="header" >
+                                <h:outputText value="Actions"/>
                             </f:facet>
-                            <h:outputText value="#{item.published_by}"/>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value=""/>
-                            </f:facet>
-                            <h:commandLink action="#{placesController.prepareView}" value="#{bundle.ListPlacesViewLink}" class="btn waves-effect waves-light">
+                            <h:commandLink action="#{placesController.prepareValidationView}" value="#{bundle.ListPlacesViewLink}" class="btn waves-effect waves-light">
                                 <i class="material-icons left">visibility</i>
                             </h:commandLink>
                             <h:outputText value=" "/>
+                            <h:commandLink action="#{placesController.validatePlace}" value="Approuver" class="btn waves-effect waves-light blue-grey darken-3">
+                                <i class="material-icons left">check </i>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink action="#{placesController.destroyValidationItems}" value="Désapprouver" class="btn waves-effect waves-light red darken-3">
+                                <i class="material-icons left">delete_forever</i>
+                            </h:commandLink>
                         </h:column>
                     </h:dataTable>
-
                     <br/>
-                    <ul class="pagination center-align" >
+                    <ul class="pagination center-align">
                         <c:choose>                                
-                            <c:when test="#{placesController.pagination.page == 0}">
+                            <c:when test="#{placesController.getPagination(1).page == 0}">
                                 <li class="disabled">
                                     <a href="#!"><i class="material-icons">chevron_left</i></a>
                                 </li>
                             </c:when>
                             <c:otherwise>
                                 <li class="waves-effect">
-                                    <h:commandLink action="#{placesController.previous}">
+                                    <h:commandLink action="#{placesController.previous(1)}">
                                         <i class="material-icons">chevron_left</i>
                                     </h:commandLink>
                                 </li>
                             </c:otherwise>
                         </c:choose>
-                        <c:forEach begin="1" end="#{placesController.numberOfPages +1}" var="i">
+                        <c:forEach begin="1" end="#{placesController.getNumberOfPages(1)}" var="i">
                             <c:choose>                                
-                                <c:when test="#{placesController.pagination.page +1 == i}">
+                                <c:when test="#{placesController.getPagination(1).page +1 == i}">
                                     <li class="active"><a href="#!">#{i}</a></li>
                                 </c:when>
                                 <c:otherwise>
                                     <li class="waves-effect">
-                                        <h:commandLink action="#{placesController.page(i)}" value="#{i}"/>
+                                        <h:commandLink action="#{placesController.page(i,1)}" value="#{i}"/>
                                     </li>
                                 </c:otherwise>
                             </c:choose>
                         </c:forEach>
                         <c:choose>                                
-                            <c:when test="#{placesController.pagination.hasNextPage}">
+                            <c:when test="#{placesController.getPagination(1).hasNextPage}">
                                 <li class="waves-effect">
-                                    <h:commandLink action="#{placesController.next}">
+                                    <h:commandLink action="#{placesController.next(1)}">
                                         <i class="material-icons">chevron_right</i>
                                     </h:commandLink>
                                 </li>
@@ -110,6 +107,7 @@
                         </c:choose>
                     </ul>
                 </h:panelGroup>
+                <br />
                 <br/>
                 <br/>
             </h:form>
