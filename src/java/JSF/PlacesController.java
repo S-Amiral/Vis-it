@@ -18,6 +18,7 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
+import javax.persistence.PrePersist;
 
 @Named("placesController")
 @SessionScoped
@@ -25,6 +26,7 @@ public class PlacesController implements Serializable {
 
     private boolean isInFullItems = false;
     private boolean isInMyItems = false;
+    private boolean isInValidationItems = false;
     private Places current;
     private DataModel items = null;
     private DataModel myItems = null;
@@ -53,7 +55,7 @@ public class PlacesController implements Serializable {
     }
 
     public PaginationHelper getPagination() {
-        if (pagination == null || isInMyItems) {
+        if (pagination == null || isInMyItems || isInValidationItems) {
             pagination = new PaginationHelper(10) {
 
                 @Override
@@ -64,17 +66,15 @@ public class PlacesController implements Serializable {
                 @Override
                 public DataModel createPageDataModel() {
                     DataModel dataModel = new ListDataModel(getFacade().findRange(new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
-                    //this.setNumberOfPage(getFacade().count());
                     return dataModel;
                 }
             };
-            isInMyItems = false;
         }
         return pagination;
     }
 
     public PaginationHelper getPagination(String publisher) {
-        if (pagination == null || isInFullItems) {
+        if (pagination == null || isInFullItems || isInValidationItems) {
             pagination = new PaginationHelper(10) {
 
                 @Override
@@ -85,11 +85,9 @@ public class PlacesController implements Serializable {
                 @Override
                 public DataModel createPageDataModel() {
                     DataModel dataModel = new ListDataModel(getFacade().findRange(publisher, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
-                    //this.setNumberOfPage((getFacade().countItems(publisher)));
                     return dataModel;
                 }
             };
-            isInFullItems = false;
         }
         return pagination;
     }
@@ -102,6 +100,12 @@ public class PlacesController implements Serializable {
     public String prepareView() {
         current = (Places) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
+        return "View";
+    }
+
+    public String prepareMyItemsView() {
+        current = (Places) getMyItems().getRowData();
+        selectedItemIndex = pagination.getPageFirstItem() + getMyItems().getRowIndex();
         return "View";
     }
 
@@ -129,6 +133,12 @@ public class PlacesController implements Serializable {
         return "Edit";
     }
 
+    public String prepareMyItemsEdit() {
+        current = (Places) getMyItems().getRowData();
+        selectedItemIndex = pagination.getPageFirstItem() + getMyItems().getRowIndex();
+        return "Edit";
+    }
+
     public String update() {
         try {
             getFacade().edit(current);
@@ -143,6 +153,15 @@ public class PlacesController implements Serializable {
     public String destroy() {
         current = (Places) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
+        performDestroy();
+        recreatePagination();
+        recreateModel();
+        return "List";
+    }
+
+    public String destroyMyItems() {
+        current = (Places) getMyItems().getRowData();
+        selectedItemIndex = pagination.getPageFirstItem() + getMyItems().getRowIndex();
         performDestroy();
         recreatePagination();
         recreateModel();
@@ -188,19 +207,31 @@ public class PlacesController implements Serializable {
 
     public DataModel getItems() {
         isInFullItems = true;
-        if (items == null) {
+        if (items == null || isInMyItems || isInValidationItems) {
             items = getPagination().createPageDataModel();
+            isInMyItems = false;
+            isInValidationItems = false;
         }
-        //numberOfPages = getFacade().countItems() / getPagination().getPageSize();
         return items;
     }
 
     public DataModel getMyItems() {
         isInMyItems = true;
-        if (items == null) {
+        if (items == null || isInFullItems || isInValidationItems) {
             items = getPagination(FacesContext.getCurrentInstance().getExternalContext().getRemoteUser()).createPageDataModel();
+            isInFullItems = false;
+            isInValidationItems = false;
         }
-        //numberOfPages = getFacade().countItems() / getPagination().getPageSize();
+        return items;
+    }
+
+    public DataModel getValidationItems() {
+        isInValidationItems = true;
+        if (items == null || isInMyItems || isInFullItems) {
+            items = getPagination().createPageDataModel();
+            isInMyItems = false;
+            isInFullItems = false;
+        }
         return items;
     }
 
@@ -300,7 +331,12 @@ public class PlacesController implements Serializable {
     }
 
     public int getNumberOfPages() {
-        System.out.println("GetNumberOfPages: " + getFacade().countItems() / getPagination().getPageSize());
-        return getFacade().countItems() / getPagination().getPageSize();
+        System.out.println("GetNumberOfPages: " + getFacade().countItems() + "/" + getPagination().getPageSize() + " Number of Page:" + (int) Math.ceil(getFacade().countItems() / (double) (getPagination().getPageSize())));
+        return (int) Math.ceil(getFacade().countItems() / (double) (getPagination().getPageSize()));
+    }
+
+    public int getNumberOfPages(String publisher) {
+        System.out.println("GetNumberOfPages: " + getFacade().countItems() / getPagination(publisher).getPageSize());
+        return (int) Math.ceil(getFacade().count(publisher) / (double) getPagination(publisher).getPageSize());
     }
 }

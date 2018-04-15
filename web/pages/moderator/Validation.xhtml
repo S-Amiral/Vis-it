@@ -16,32 +16,32 @@
                 </h:panelGroup>
                 <h:outputText escape="false" value="#{bundle.ListPlacesEmpty}" rendered="#{placesController.items.rowCount == 0}"/>
                 <h:panelGroup rendered="#{placesController.items.rowCount > 0}">
-                    <h:dataTable value="#{placesController.items}" var="item" border="0" cellpadding="2" cellspacing="0" rules="all" headerClass="center-align">
-                        <h:column class="center-align">
+                    <h:dataTable value="#{placesController.items}" var="item" border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px">
+                        <h:column>
                             <f:facet name="header">
                                 <h:outputText value="#{bundle.ListPlacesTitle_title}"/>
                             </f:facet>
                             <h:outputText value="#{item.title}"/>
                         </h:column>
-                        <h:column class="center-align">
+                        <h:column>
                             <f:facet name="header">
                                 <h:outputText value="#{bundle.ListPlacesTitle_description}"/>
                             </f:facet>
                             <h:outputText value="#{item.description}"/>
                         </h:column>
-                        <h:column class="center-align">
+                        <h:column>
                             <f:facet name="header">
                                 <h:outputText value="#{bundle.ListPlacesTitle_latitude}"/>
                             </f:facet>
                             <h:outputText value="#{item.latitude}"/>
                         </h:column>
-                        <h:column class="center-align">
+                        <h:column>
                             <f:facet name="header">
                                 <h:outputText value="#{bundle.ListPlacesTitle_longitude}"/>
                             </f:facet>
                             <h:outputText value="#{item.longitude}"/>
                         </h:column>
-                        <h:column class="center-align">
+                        <h:column>
                             <f:facet name="header">
                                 <h:outputText value="#{bundle.ListPlacesTitle_published_date}"/>
                             </f:facet>
@@ -49,13 +49,13 @@
                                 <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
                             </h:outputText>
                         </h:column>
-                        <h:column class="center-align">
+                        <h:column>
                             <f:facet name="header">
                                 <h:outputText value="#{bundle.ListPlacesTitle_published_by}"/>
                             </f:facet>
                             <h:outputText value="#{item.published_by}"/>
                         </h:column>
-                        <h:column class="center-align">
+                        <h:column>
                             <f:facet name="header">
                                 <h:outputText value=""/>
                             </f:facet>
@@ -82,7 +82,7 @@
                                 </li>
                             </c:otherwise>
                         </c:choose>
-                        <c:forEach begin="1" end="#{placesController.numberOfPages}" var="i">
+                        <c:forEach begin="1" end="#{placesController.numberOfPages +1}" var="i">
                             <c:choose>                                
                                 <c:when test="#{placesController.pagination.page +1 == i}">
                                     <li class="active"><a href="#!">#{i}</a></li>
@@ -110,12 +110,6 @@
                         </c:choose>
                     </ul>
                 </h:panelGroup>
-                <br />
-                <h:commandLink action="#{placesController.prepareCreate}" value="#{bundle.ListPlacesCreateLink}" rendered="#{not empty request.remoteUser}" class="waves-effect waves-light btn-large right">
-                    <i class="material-icons left">add_circle_outline</i>
-                </h:commandLink>
-                <br/>
-                <br/>
                 <br/>
                 <br/>
             </h:form>

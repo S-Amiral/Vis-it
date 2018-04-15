@@ -57,7 +57,24 @@ public class PlacesFacade extends AbstractFacade<Places> {
         q.setFirstResult(range[0]);
         // executer la requete avec criteres
         return q.getResultList();
+    }
 
+    public List<Places> findRange(int[] range) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery c = cb.createQuery(Places.class);
+        Root<Places> m = c.from(Places.class);
+        c.select(m);
+        c.where(cb.equal(m.get(Places_.isValidate), false));
+        Query q = em.createQuery(c);
+        q.setMaxResults(range[1] - range[0] + 1);
+        q.setFirstResult(range[0]);
+        return q.getResultList();
+        /*javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
+        cq.select(cq.from(Places.class));
+        javax.persistence.Query q = getEntityManager().createQuery(cq);
+        q.setMaxResults(range[1] - range[0] + 1);
+        q.setFirstResult(range[0]);
+        return q.getResultList();*/
     }
 
     public int count(String publisher) {

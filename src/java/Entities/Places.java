@@ -41,7 +41,17 @@ public class Places implements Serializable {
     @Column(insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date published_date;
-    
+
+    private boolean isValidate;
+
+    public boolean isIsValidate() {
+        return isValidate;
+    }
+
+    public void setIsValidate(boolean isValidate) {
+        this.isValidate = isValidate;
+    }
+
     @OneToOne
     private Users published_by;
 
@@ -129,6 +139,7 @@ public class Places implements Serializable {
     @PrePersist
     void onCreate() {
         this.setPublished_date(new Date());
+        this.setIsValidate(false);
     }
 
 }

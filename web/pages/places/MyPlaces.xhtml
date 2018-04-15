@@ -13,11 +13,32 @@
                 </h:panelGroup>
                 <h:outputText escape="false" value="#{bundle.ListPlacesEmpty}" rendered="#{placesController.myItems.rowCount == 0}"/>
                 <h:panelGroup rendered="#{placesController.myItems.rowCount > 0}">
-                    <h:outputText value="#{placesController.getPagination(request.remoteUser).pageFirstItem + 1}..#{placesController.getPagination(request.remoteUser).pageLastItem + 1}/#{placesController.getPagination(request.remoteUser).itemsCount}"/>
-                    <h:commandLink action="#{placesController.previous(request.remoteUser)}" value="#{bundle.Previous} #{placesController.getPagination(request.remoteUser).pageSize}" rendered="#{placesController.getPagination(request.remoteUser).hasPreviousPage}"/>
-                    <h:commandLink action="#{placesController.next(request.remoteUser)}" value="#{bundle.Next} #{placesController.getPagination(request.remoteUser).pageSize}" rendered="#{placesController.getPagination(request.remoteUser).hasNextPage}"/>
-                    <h:dataTable value="#{placesController.myItems}" var="item" border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px">
-                        <h:column>
+                    <h:dataTable value="#{placesController.myItems}" var="item" border="0" cellpadding="2" cellspacing="0" rules="all" headerClass="center-align">
+                        <h:column class="center-align">
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListPlacesTitle_title}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.title}"/>
+                        </h:column>
+                        <h:column class="center-align">
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListPlacesTitle_description}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.description}"/>
+                        </h:column>
+                        <h:column class="center-align">
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListPlacesTitle_latitude}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.latitude}"/>
+                        </h:column>
+                        <h:column class="center-align">
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListPlacesTitle_longitude}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.longitude}"/>
+                        </h:column>
+                        <h:column class="center-align">
                             <f:facet name="header">
                                 <h:outputText value="#{bundle.ListPlacesTitle_published_date}"/>
                             </f:facet>
@@ -25,57 +46,27 @@
                                 <f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss" />
                             </h:outputText>
                         </h:column>
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListPlacesTitle_published_by}"/>
+                        <h:column class="center-align">
+                            <f:facet name="header" >
+                                <h:outputText value="Actions"/>
                             </f:facet>
-                            <h:outputText value="#{item.published_by}"/>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListPlacesTitle_title}"/>
-                            </f:facet>
-                            <h:outputText value="#{item.title}"/>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListPlacesTitle_latitude}"/>
-                            </f:facet>
-                            <h:outputText value="#{item.latitude}"/>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListPlacesTitle_longitude}"/>
-                            </f:facet>
-                            <h:outputText value="#{item.longitude}"/>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListPlacesTitle_description}"/>
-                            </f:facet>
-                            <h:outputText value="#{item.description}"/>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.ListPlacesTitle_id}"/>
-                            </f:facet>
-                            <h:outputText value="#{item.id}"/>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value=""/>
-                            </f:facet>
-                            <h:commandLink action="#{placesController.prepareView}" value="#{bundle.ListPlacesViewLink}"/>
+                            <h:commandLink action="#{placesController.prepareMyItemsView}" value="#{bundle.ListPlacesViewLink}" class="btn waves-effect waves-light">
+                                <i class="material-icons left">visibility</i>
+                            </h:commandLink>
                             <h:outputText value=" "/>
-                            <h:commandLink action="#{placesController.prepareEdit}" value="#{bundle.ListPlacesEditLink}"/>
+                             <h:commandLink action="#{placesController.prepareMyItemsEdit}" value="#{bundle.ListPlacesEditLink}" class="btn waves-effect waves-light blue-grey darken-3">
+                                <i class="material-icons left">edit </i>
+                            </h:commandLink>
                             <h:outputText value=" "/>
-                            <h:commandLink action="#{placesController.destroy}" value="#{bundle.ListPlacesDestroyLink}"/>
+                             <h:commandLink action="#{placesController.destroyMyItems}" value="#{bundle.ListPlacesDestroyLink}" class="btn waves-effect waves-light red darken-3">
+                                <i class="material-icons left">delete_forever</i>
+                            </h:commandLink>
                         </h:column>
                     </h:dataTable>
                     <br/>
-                    <ul class="pagination center-align" >
+                    <ul class="pagination center-align">
                         <c:choose>                                
-                            <c:when test="#{placesController.pagination.page == 0}">
+                            <c:when test="#{placesController.getPagination(request.remoteUser).page == 0}">
                                 <li class="disabled">
                                     <a href="#!"><i class="material-icons">chevron_left</i></a>
                                 </li>
@@ -88,9 +79,9 @@
                                 </li>
                             </c:otherwise>
                         </c:choose>
-                        <c:forEach begin="1" end="#{placesController.numberOfPages +1}" var="i">
+                        <c:forEach begin="1" end="#{placesController.getNumberOfPages(request.remoteUser)}" var="i">
                             <c:choose>                                
-                                <c:when test="#{placesController.pagination.page +1 == i}">
+                                <c:when test="#{placesController.getPagination(request.remoteUser).page +1 == i}">
                                     <li class="active"><a href="#!">#{i}</a></li>
                                 </c:when>
                                 <c:otherwise>
@@ -101,7 +92,7 @@
                             </c:choose>
                         </c:forEach>
                         <c:choose>                                
-                            <c:when test="#{placesController.pagination.hasNextPage}">
+                            <c:when test="#{placesController.getPagination(request.remoteUser).hasNextPage}">
                                 <li class="waves-effect">
                                     <h:commandLink action="#{placesController.next(request.remoteUser)}">
                                         <i class="material-icons">chevron_right</i>

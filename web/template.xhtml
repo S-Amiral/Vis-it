@@ -31,6 +31,11 @@
                                     <h:link value="Gestion utilisateur" outcome="/pages/users/List.xhtml"/>
                                 </li>
                             </h:panelGroup>
+                            <h:panelGroup rendered="#{request.isUserInRole('admin') || request.isUserInRole('moderator')}">
+                                <li>
+                                    <h:link value="Validations" outcome="/pages/moderator/Validation.xhtml"/>
+                                </li>
+                            </h:panelGroup>
                             <h:panelGroup rendered="#{not empty request.remoteUser}">
                                 <li>
                                     <h:link value="Mes lieux" outcome="/pages/places/MyPlaces.xhtml"/>
