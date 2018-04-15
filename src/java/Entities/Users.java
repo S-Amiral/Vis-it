@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.xml.bind.DatatypeConverter;
@@ -31,7 +32,7 @@ public class Users implements Serializable {
     @Column(length = 50)
     private String username;
     private String password;
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
     private List<Groups> groups;
 
     public String getUsername() {

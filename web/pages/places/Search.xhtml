@@ -13,16 +13,18 @@
             Recherche: 
             <h:form class="center">
                 <h:inputText value="#{searchManagedBean.textToFind}"></h:inputText>
-                <h:commandButton value="Rechercher" action="Search"></h:commandButton>
+                <h:commandButton value="Rechercher"></h:commandButton>
             </h:form>
+            Résultat pour la recherche: #{searchManagedBean.textToFind}
             <br/><br/>
+
             <h:form styleClass="jsfcrud_list_form">
                 <h:panelGroup id="messagePanel" layout="block">
                     <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
                 </h:panelGroup>
-                <h:outputText escape="false" value="#{bundle.ListPlacesEmpty}" rendered="#{placesController.items.rowCount == 0}"/>
-                <h:panelGroup rendered="#{placesController.items.rowCount > 0}">
-                    <h:dataTable value="#{placesController.items}" var="item" border="0" cellpadding="2" cellspacing="0" rules="all" headerClass="center-align">
+                <h:outputText escape="false" value="#{bundle.ListPlacesEmpty}" rendered="#{searchManagedBean.items.rowCount == 0}"/>
+                <h:panelGroup rendered="#{searchManagedBean.items.rowCount > 0}">
+                    <h:dataTable value="#{searchManagedBean.items}" var="item" border="0" cellpadding="2" cellspacing="0" rules="all" headerClass="center-align">
                         <h:column class="center-align">
                             <f:facet name="header">
                                 <h:outputText value="#{bundle.ListPlacesTitle_title}"/>
@@ -71,50 +73,6 @@
                             <h:outputText value=" "/>
                         </h:column>
                     </h:dataTable>
-                    <!-- Pagination -->
-                    <br/>
-                    <ul class="pagination center-align" >
-                        <c:choose>                                
-                            <c:when test="#{placesController.pagination.page == 0}">
-                                <li class="disabled">
-                                    <a href="#!"><i class="material-icons">chevron_left</i></a>
-                                </li>
-                            </c:when>
-                            <c:otherwise>
-                                <li class="waves-effect">
-                                    <h:commandLink action="#{placesController.previous}">
-                                        <i class="material-icons">chevron_left</i>
-                                    </h:commandLink>
-                                </li>
-                            </c:otherwise>
-                        </c:choose>
-                        <c:forEach begin="1" end="#{placesController.numberOfPages}" var="i">
-                            <c:choose>                                
-                                <c:when test="#{placesController.pagination.page +1 == i}">
-                                    <li class="active"><a href="#!">#{i}</a></li>
-                                </c:when>
-                                <c:otherwise>
-                                    <li class="waves-effect">
-                                        <h:commandLink action="#{placesController.page(i)}" value="#{i}"/>
-                                    </li>
-                                </c:otherwise>
-                            </c:choose>
-                        </c:forEach>
-                        <c:choose>                                
-                            <c:when test="#{placesController.pagination.hasNextPage}">
-                                <li class="waves-effect">
-                                    <h:commandLink action="#{placesController.next}">
-                                        <i class="material-icons">chevron_right</i>
-                                    </h:commandLink>
-                                </li>
-                            </c:when>
-                            <c:otherwise>
-                                <li class="disabled">
-                                    <a href="#!"><i class="material-icons">chevron_right</i></a>
-                                </li>
-                            </c:otherwise>
-                        </c:choose>
-                    </ul>
                 </h:panelGroup>
                 <br />
                 <h:commandLink action="#{placesController.prepareCreate}" value="#{bundle.ListPlacesCreateLink}" rendered="#{not empty request.remoteUser}" class="waves-effect waves-light btn-large right">

@@ -25,9 +25,11 @@ public class PlacesController implements Serializable {
     private boolean isInFullItems = false;
     private boolean isInMyItems = false;
     private boolean isInValidationItems = false;
+    private boolean isInSearchItems = false;
     private Places current;
     private DataModel items = null;
     public static final int VALIDATION = 1;
+    public static final int SEARCH = 2;
 
     @EJB
     private SessionBeans.PlacesFacade ejbFacade;
@@ -53,7 +55,7 @@ public class PlacesController implements Serializable {
     }
 
     public PaginationHelper getPagination() {
-        if (pagination == null || isInMyItems || isInValidationItems) {
+        if (pagination == null || isInMyItems || isInValidationItems ) {
             pagination = new PaginationHelper(10) {
 
                 @Override
@@ -73,19 +75,42 @@ public class PlacesController implements Serializable {
 
     public PaginationHelper getPagination(int option) {
         if (pagination == null || isInMyItems || isInFullItems) {
-            pagination = new PaginationHelper(10) {
+            switch (option) {
+                case VALIDATION:
+                    pagination = new PaginationHelper(10) {
 
-                @Override
-                public int getItemsCount() {
-                    return getFacade().count(option);
-                }
+                        @Override
+                        public int getItemsCount() {
+                            return getFacade().count(option);
+                        }
 
-                @Override
-                public DataModel createPageDataModel() {
-                    DataModel dataModel = new ListDataModel(getFacade().findRange(option, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
-                    return dataModel;
-                }
-            };
+                        @Override
+                        public DataModel createPageDataModel() {
+                            DataModel dataModel = new ListDataModel(getFacade().findRange(option, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                            return dataModel;
+                        }
+                    };
+                    break;
+                case SEARCH:
+                    pagination = new PaginationHelper(10) {
+
+                        @Override
+                        public int getItemsCount() {
+                            return getFacade().count(option);
+                        }
+
+                        @Override
+                        public DataModel createPageDataModel() {
+                            DataModel dataModel = new ListDataModel(getFacade().findRange(option, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                            return dataModel;
+                        }
+                    };
+                    break;
+                default:
+                    return pagination;
+
+            }
+
         }
         return pagination;
     }

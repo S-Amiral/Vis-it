@@ -1,11 +1,13 @@
 package JSF;
 
+import Entities.Groups;
 import Entities.Users;
 import JSF.util.JsfUtil;
 import JSF.util.PaginationHelper;
 import SessionBeans.UsersFacade;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.ResourceBundle;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -299,4 +301,151 @@ public class UsersController implements Serializable {
 
     }
 
+    public String page(int page) {
+        getPagination().setPage(page - 1);
+        recreateModel();
+        return "List";
+    }
+
+    public int getNumberOfPages() {
+        return (int) Math.ceil(getFacade().count() / (double) (getPagination().getPageSize()));
+    }
+
+    public String setAdmin(String username) {
+        current = getUsers(username);
+        Groups groupAdmin = new Groups();
+        groupAdmin.setGroupName("admin");
+        List<Groups> currentGroups = current.getGroups();
+        currentGroups.add(groupAdmin);
+        current.setGroups(currentGroups);
+        try {
+            getFacade().edit(current);
+            JsfUtil.addSuccessMessage(username + " est devenu administrateur");
+            return "List";
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+            return null;
+        }
+    }
+
+    public String removeAdmin(String username) {
+        current = getUsers(username);
+        List<Groups> currentGroups = current.getGroups();
+        currentGroups.removeIf(group -> group.getGroupName().equals("admin"));
+        current.setGroups(currentGroups);
+        try {
+            getFacade().edit(current);
+            JsfUtil.addSuccessMessage(username + " n'est plus administrateur");
+            return "List";
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+            return null;
+        }
+    }
+
+    public String setStandard(String username) {
+        current = getUsers(username);
+        Groups groupStandard = new Groups();
+        groupStandard.setGroupName("standard");
+        List<Groups> currentGroups = current.getGroups();
+        currentGroups.add(groupStandard);
+        current.setGroups(currentGroups);
+        try {
+            getFacade().edit(current);
+            JsfUtil.addSuccessMessage(username + " est devenu membre standard");
+            return "List";
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+            return null;
+        }
+    }
+
+    public String removeStandard(String username) {
+        current = getUsers(username);
+        List<Groups> currentGroups = current.getGroups();
+        currentGroups.removeIf(group -> group.getGroupName().equals("standard"));
+        current.setGroups(currentGroups);
+        try {
+            getFacade().edit(current);
+            JsfUtil.addSuccessMessage(username + " n'est plus un membre standard");
+            return "List";
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+            return null;
+        }
+    }
+
+    public String setModerator(String username) {
+        current = getUsers(username);
+        Groups groupModerator = new Groups();
+        groupModerator.setGroupName("moderator");
+        List<Groups> currentGroups = current.getGroups();
+        currentGroups.add(groupModerator);
+        current.setGroups(currentGroups);
+        try {
+            getFacade().edit(current);
+            JsfUtil.addSuccessMessage(username + " est devenu modérateur");
+            return "List";
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+            return null;
+        }
+    }
+
+    public String removeModerator(String username) {
+        current = getUsers(username);
+        List<Groups> currentGroups = current.getGroups();
+        currentGroups.removeIf(group -> group.getGroupName().equals("moderator"));
+        current.setGroups(currentGroups);
+        try {
+            getFacade().edit(current);
+            JsfUtil.addSuccessMessage(username + " n'est plus un moderateur");
+            return "List";
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+            return null;
+        }
+    }
+
+    public boolean isUserStandard(String user) {
+        Users test = getUsers(user);
+        if (test == null) {
+            return false;
+        }
+        boolean isStandard = false;
+        for (Groups group : test.getGroups()) {
+            if (group.getGroupName().equals("standard")) {
+                isStandard = true;
+            }
+        }
+        return isStandard;
+    }
+
+    public boolean isUserModerator(String user) {
+        Users test = getUsers(user);
+        if (test == null) {
+            return false;
+        }
+        boolean isModerator = false;
+        for (Groups group : test.getGroups()) {
+            if (group.getGroupName().equals("moderator")) {
+                isModerator = true;
+            }
+        }
+        return isModerator;
+    }
+
+    public boolean isUserAdmin(String user) {
+        Users test = getUsers(user);
+        if (test == null) {
+            return false;
+        }
+        boolean isAdmin = false;
+        for (Groups group : test.getGroups()) {
+            if (group.getGroupName().equals("admin")) {
+                isAdmin = true;
+            }
+        }
+        return isAdmin;
+    }
 }

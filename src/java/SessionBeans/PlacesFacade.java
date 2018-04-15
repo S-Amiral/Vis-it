@@ -120,7 +120,7 @@ public class PlacesFacade extends AbstractFacade<Places> {
 
     public int count(int option) {
         switch (option) {
-            case 1:
+            case PlacesController.VALIDATION:
                 CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
                 CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
                 Root<Places> rt = criteriaQuery.from(Places.class);
@@ -131,6 +131,19 @@ public class PlacesFacade extends AbstractFacade<Places> {
             default:
                 return 0;
         }
+    }
+
+    public List findSearch(String textToFind, int[] i) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery c = cb.createQuery(Places.class);
+        Root<Places> m = c.from(Places.class);
+        c.select(m);
+        c.where(cb.equal(m.get(Places_.isValidate), false));
+        c.where(cb.like(m.get(Places_.title), "%"+textToFind+"%"));
+        Query q = em.createQuery(c);
+        q.setMaxResults(10);
+        q.setFirstResult(0);
+        return q.getResultList();
     }
 
 }
