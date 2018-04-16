@@ -82,6 +82,12 @@
                         </h:column>
                         <h:column class="center-align">
                             <f:facet name="header">
+                                <h:outputText value="Évaluation"/>
+                            </f:facet>
+                            <h:outputText value="#{placesController.getScore(item.id)}"/>
+                        </h:column>
+                        <h:column class="center-align">
+                            <f:facet name="header">
                                 <h:outputText value="#{bundle.ListPlacesTitle_published_date}"/>
                             </f:facet>
                             <h:outputText value="#{item.published_date}">
@@ -98,7 +104,7 @@
                             <f:facet name="header">
                                 <h:outputText value=""/>
                             </f:facet>
-                            <h:commandLink  value="#{bundle.ListPlacesViewLink}" class="btn waves-effect waves-light">
+                            <h:commandLink  value="#{bundle.ListPlacesViewLink}" class="btn waves-effect waves-light" action="#{placesController.viewPlace(item.id)}">
                                 <i class="material-icons left">visibility</i>
                             </h:commandLink>
                             <h:outputText value=" "/>

@@ -422,4 +422,13 @@ public class PlacesController implements Serializable {
     public int getNumberOfPages(int option) {
         return (int) Math.ceil(getFacade().count(option) / (double) getPagination(option).getPageSize());
     }
+    
+    public double getScore(int placeID){
+        return getFacade().getAvg(placeID);
+    }
+    
+    public String viewPlace(Long id){
+        current = getPlaces(id);
+        return "View";
+    }
 }

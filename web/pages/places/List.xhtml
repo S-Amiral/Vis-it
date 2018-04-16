@@ -80,6 +80,12 @@
                         </h:column>
                         <h:column class="center-align">
                             <f:facet name="header">
+                                <h:outputText value="Évaluation"/>
+                            </f:facet>
+                            <h:outputText value="#{placesController.getScore(item.id)}"/>
+                        </h:column>
+                        <h:column class="center-align">
+                            <f:facet name="header">
                                 <h:outputText value="#{bundle.ListPlacesTitle_published_date}"/>
                             </f:facet>
                             <h:outputText value="#{item.published_date}">

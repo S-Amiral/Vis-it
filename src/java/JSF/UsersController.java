@@ -7,6 +7,7 @@ import JSF.util.PaginationHelper;
 import SessionBeans.UsersFacade;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javax.ejb.EJB;
@@ -313,6 +314,7 @@ public class UsersController implements Serializable {
 
     public String setAdmin(String username) {
         current = getUsers(username);
+        ejbFacade.updateUserToAdmin(username);
         Groups groupAdmin = new Groups();
         groupAdmin.setGroupName("admin");
         List<Groups> currentGroups = current.getGroups();
@@ -330,9 +332,11 @@ public class UsersController implements Serializable {
 
     public String removeAdmin(String username) {
         current = getUsers(username);
+        ejbFacade.removeUserToAdmin(username);
         List<Groups> currentGroups = current.getGroups();
         currentGroups.removeIf(group -> group.getGroupName().equals("admin"));
         current.setGroups(currentGroups);
+        
         try {
             getFacade().edit(current);
             JsfUtil.addSuccessMessage(username + " n'est plus administrateur");
@@ -345,6 +349,7 @@ public class UsersController implements Serializable {
 
     public String setStandard(String username) {
         current = getUsers(username);
+        ejbFacade.updateUserToStandard(username);
         Groups groupStandard = new Groups();
         groupStandard.setGroupName("standard");
         List<Groups> currentGroups = current.getGroups();
@@ -362,6 +367,7 @@ public class UsersController implements Serializable {
 
     public String removeStandard(String username) {
         current = getUsers(username);
+        ejbFacade.removeUserToStandard(username);
         List<Groups> currentGroups = current.getGroups();
         currentGroups.removeIf(group -> group.getGroupName().equals("standard"));
         current.setGroups(currentGroups);
@@ -377,6 +383,7 @@ public class UsersController implements Serializable {
 
     public String setModerator(String username) {
         current = getUsers(username);
+        ejbFacade.updateUserToModerator(username);
         Groups groupModerator = new Groups();
         groupModerator.setGroupName("moderator");
         List<Groups> currentGroups = current.getGroups();
@@ -394,6 +401,7 @@ public class UsersController implements Serializable {
 
     public String removeModerator(String username) {
         current = getUsers(username);
+        ejbFacade.removeUserToModerator(username);
         List<Groups> currentGroups = current.getGroups();
         currentGroups.removeIf(group -> group.getGroupName().equals("moderator"));
         current.setGroups(currentGroups);

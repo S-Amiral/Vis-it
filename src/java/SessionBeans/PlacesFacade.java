@@ -5,6 +5,8 @@
  */
 package SessionBeans;
 
+import Entities.Evaluation;
+import Entities.Evaluation_;
 import Entities.Places;
 import Entities.Places_;
 import Entities.Users;
@@ -27,11 +29,9 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Join;
 
 /**
  *
@@ -155,6 +155,7 @@ public class PlacesFacade extends AbstractFacade<Places> {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery c = cb.createQuery(Places.class);
         Root<Places> m = c.from(Places.class);
+        //Root<Evaluation> rootEvaluation = c.from(entityClass)
         Join<Places, Users> joinUser = m.join(Places_.published_by);
         c.select(m);
         List<Predicate> filtersPredicate = new ArrayList<Predicate>();
@@ -188,6 +189,26 @@ public class PlacesFacade extends AbstractFacade<Places> {
         q.setMaxResults(10);
         q.setFirstResult(0);
         return q.getResultList();
+    }
+
+    public double getAvg(int placeID) {
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<Double> criteriaQuery = criteriaBuilder.createQuery(Double.class);
+        Root<Evaluation> rt = criteriaQuery.from(Evaluation.class);
+        Join<Evaluation, Places> joinPlace = rt.join(Evaluation_.place_evaluated);
+        criteriaQuery.select(criteriaBuilder.avg(rt.get("score")));
+        //Indiquer les conditions
+        criteriaQuery.where(criteriaBuilder.equal(joinPlace.get(Places_.id), placeID));
+        //Création de la requête
+        Query q = em.createQuery(criteriaQuery);
+        //Retour du résultat
+        Double resultDouble = (Double) q.getSingleResult();
+        if (resultDouble == null) {
+            return 0.;
+        }
+        double resultDoubleTwoDecimal = resultDouble * 100;
+        int resultInt = (int) resultDoubleTwoDecimal;
+        return resultInt / 100.0;
     }
 
 }
