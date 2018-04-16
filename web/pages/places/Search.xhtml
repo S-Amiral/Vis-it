@@ -3,6 +3,7 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
                 template="/template.xhtml">
     <ui:define name="title">
         <h:outputText value="#{bundle.ListPlacesTitle}"></h:outputText>
@@ -13,6 +14,36 @@
             Recherche: 
             <h:form class="center">
                 <h:inputText value="#{searchManagedBean.textToFind}"></h:inputText>
+                <h:commandLink onclick="filter(); return false" value="filtres" />
+                <br/><br/>
+                <div id="filter" style="display: none;">
+                    <div class="row">
+                        <div class="col s4">
+                            <div class="grey lighten-3">Publié par:</div>
+                            <h:selectOneMenu value="#{searchManagedBean.currentUser}" >
+                                <f:selectItem itemLabel="Tous" itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems value="#{usersController.items}"/>
+                            </h:selectOneMenu>
+                        </div>
+                        <div class="col s4">
+                            <div class="grey lighten-3">Date de publication:</div>
+                            <h:selectOneMenu value="#{searchManagedBean.datePeriod}">
+                                <f:selectItem itemLabel="Toutes les périodes" noSelectionOption="true" />
+                                <f:selectItem itemValue="Cette semaine"/>
+                                <f:selectItem itemValue="Ce mois"/>
+                                <f:selectItem itemValue="Cette année"/>
+                            </h:selectOneMenu>
+                        </div>
+                        <div class="col s4">
+                            <div class="grey lighten-3">Score minimum de:</div>
+                            <p class="range-field">
+                                <h:inputText a:type="range" id="rating" a:min="0" a:max="100" value="#{evaluationManagedBean.minScore}">
+                                    <f:convertNumber/>
+                                </h:inputText>
+                            </p>
+                        </div>
+                    </div>
+                </div>
                 <h:commandButton value="Rechercher" action="#{searchManagedBean.newSearch}"></h:commandButton>
             </h:form>
             Résultat pour la recherche: #{searchManagedBean.textToFind}

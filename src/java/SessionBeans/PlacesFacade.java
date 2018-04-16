@@ -10,8 +10,16 @@ import Entities.Places_;
 import Entities.Users;
 import Entities.Users_;
 import JSF.PlacesController;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -133,26 +141,53 @@ public class PlacesFacade extends AbstractFacade<Places> {
         }
     }
 
-    public List findSearch(String textToFind, int[] i) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery c = cb.createQuery(Places.class);
-        Root<Places> m = c.from(Places.class);
-        c.select(m);
-        c.where(cb.equal(m.get(Places_.isValidate), true),cb.like(m.get(Places_.title), "%" + textToFind + "%"));
-        Query q = em.createQuery(c);
-        q.setMaxResults(10);
-        q.setFirstResult(0);
-        return q.getResultList();
-    }
-
     public int countItems(String textToFind) {
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Places> rt = criteriaQuery.from(Places.class);
         criteriaQuery.select(criteriaBuilder.count(rt));
-        criteriaQuery.where(criteriaBuilder.equal(rt.get(Places_.isValidate), true),criteriaBuilder.like(rt.get(Places_.title), "%" + textToFind + "%"));
+        criteriaQuery.where(criteriaBuilder.equal(rt.get(Places_.isValidate), true), criteriaBuilder.like(rt.get(Places_.title), "%" + textToFind + "%"));
         Query q = em.createQuery(criteriaQuery);
         return ((Long) q.getSingleResult()).intValue();
+    }
+
+    public List findSearch(Map<String, String> filters, int[] i) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery c = cb.createQuery(Places.class);
+        Root<Places> m = c.from(Places.class);
+        Join<Places, Users> joinUser = m.join(Places_.published_by);
+        c.select(m);
+        List<Predicate> filtersPredicate = new ArrayList<Predicate>();
+        filtersPredicate.add(cb.equal(m.get(Places_.isValidate), true));
+
+        for (Map.Entry<String, String> entry : filters.entrySet()) {
+            switch (entry.getKey()) {
+                case "name":
+                    filtersPredicate.add(cb.like(m.get(Places_.title), "%" + entry.getValue() + "%"));
+                    break;
+                case "user":
+                    filtersPredicate.add(cb.equal(joinUser.get(Users_.username), entry.getValue()));
+                    break;
+                case "score":
+                    break;
+                case "date":
+                    DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+                    try {
+                        Date date = format.parse(entry.getValue());
+                        filtersPredicate.add(cb.greaterThanOrEqualTo(m.<Date>get(Places_.published_date), date));
+                    } catch (ParseException ex) {
+                        Logger.getLogger(PlacesFacade.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        c.where(cb.and(filtersPredicate.toArray(new Predicate[filtersPredicate.size()])));
+        Query q = em.createQuery(c);
+        q.setMaxResults(10);
+        q.setFirstResult(0);
+        return q.getResultList();
     }
 
 }

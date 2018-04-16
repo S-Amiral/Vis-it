@@ -40,6 +40,15 @@ public class EvaluationManagedBean {
     private SessionBeans.UsersFacade userEjbFacade;
 
     private int score;
+    private int minScore = 0;
+
+    public void setMinScore(int minScore) {
+        this.minScore = minScore;
+    }
+
+    public int getMinScore() {
+        return minScore;
+    }
 
     @PostConstruct
     private void init() {

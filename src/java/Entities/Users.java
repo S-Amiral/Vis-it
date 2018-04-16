@@ -116,7 +116,7 @@ public class Users implements Serializable {
 
     @Override
     public String toString() {
-        return "Entities.Users[ username=" + username + " ]";
+        return username;
     }
 
 }

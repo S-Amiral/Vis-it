@@ -6,8 +6,16 @@
 package JSF;
 
 import Entities.Places;
+import Entities.Users;
 import JSF.util.PaginationHelper;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
@@ -29,6 +37,34 @@ public class SearchManagedBean implements Serializable {
     private DataModel items = null;
     private PaginationHelper pagination;
     private Places current;
+    private Users currentUser;
+    private String datePeriod;
+    private int minScore;
+    private Map<String, String> filters;
+
+    public int getMinScore() {
+        return minScore;
+    }
+
+    public void setMinScore(int minScore) {
+        this.minScore = minScore;
+    }
+
+    public String getDatePeriod() {
+        return datePeriod;
+    }
+
+    public void setDatePeriod(String datePeriod) {
+        this.datePeriod = datePeriod;
+    }
+
+    public Users getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(Users currentUser) {
+        this.currentUser = currentUser;
+    }
 
     public PaginationHelper getPagination() {
         if (pagination == null) {
@@ -41,7 +77,34 @@ public class SearchManagedBean implements Serializable {
 
                 @Override
                 public DataModel createPageDataModel() {
-                    DataModel dataModel = new ListDataModel(ejbFacade.findSearch(textToFind, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
+                    filters.put("name", textToFind);
+                    filters.put("score", String.valueOf(minScore));
+                    if (currentUser != null) {
+                        filters.put("user", currentUser.getUsername());
+                    }
+                    if (datePeriod != null) {
+                        SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
+                        Date dt = new Date();
+                        Calendar c = Calendar.getInstance();
+                        c.setTime(dt);
+                        switch (datePeriod) {
+                            case "Cette semaine":
+                                c.add(Calendar.DAY_OF_MONTH, -7);
+                                filters.put("date", formatDate.format(c.getTime()));
+                                break;
+                            case "Ce mois":
+                                c.add(Calendar.MONTH, -1);
+                                filters.put("date", formatDate.format(c.getTime()));
+                                break;
+                            case "Cette année":
+                                c.add(Calendar.YEAR, -1);
+                                filters.put("date", formatDate.format(c.getTime()));
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    DataModel dataModel = new ListDataModel(ejbFacade.findSearch(filters, new int[]{getPageFirstItem(), getPageFirstItem() + getPageSize()}));
                     return dataModel;
                 }
             };
@@ -50,6 +113,7 @@ public class SearchManagedBean implements Serializable {
     }
 
     public DataModel getItems() {
+        System.out.println("CurrentUser: " + currentUser + " date Period:" + datePeriod + " Note min:" + minScore);
         if (items == null) {
             items = getPagination().createPageDataModel();
         }
@@ -72,6 +136,11 @@ public class SearchManagedBean implements Serializable {
      * Creates a new instance of SearchManagedBean
      */
     public SearchManagedBean() {
+    }
+
+    @PostConstruct
+    public void init() {
+        filters = new HashMap<String, String>();
     }
 
     private void recreateModel() {
@@ -99,14 +168,15 @@ public class SearchManagedBean implements Serializable {
         recreateModel();
         return "Search";
     }
-    
+
     public String prepareView() {
         current = (Places) getItems().getRowData();
         //selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
         return "View";
     }
-    
-    public void newSearch(){
+
+    public void newSearch() {
+        filters.clear();
         recreateModel();
         pagination = null;
     }
