@@ -117,6 +117,7 @@ public class UsersController implements Serializable {
     public String create() {
         try {
             getFacade().create(current);
+            setStandard(current.getUsername());
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsersCreated"));
             return prepareCreate();
         } catch (Exception e) {

@@ -51,8 +51,7 @@ public class EvaluationFacade extends AbstractFacade<Evaluation> {
         //Selection avec un count
         criteriaQuery.select(criteriaBuilder.count(rt));
         //Indiquer les conditions
-        criteriaQuery.where(criteriaBuilder.equal(joinUser.get(Users_.username), user.getSurname()));
-        criteriaQuery.where(criteriaBuilder.equal(joinPlace.get(Places_.id), place.getId()));
+        criteriaQuery.where(criteriaBuilder.equal(joinUser.get(Users_.username), user.getSurname()),criteriaBuilder.equal(joinPlace.get(Places_.id), place.getId()));
         //Création de la requête
         Query q = em.createQuery(criteriaQuery);
         //Retour du résultat
@@ -71,8 +70,7 @@ public class EvaluationFacade extends AbstractFacade<Evaluation> {
         //Selection avec un count
         criteriaQuery.select(rt);
         //Indiquer les conditions
-        criteriaQuery.where(criteriaBuilder.equal(joinUser.get(Users_.username), find.getSurname()));
-        criteriaQuery.where(criteriaBuilder.equal(joinPlace.get(Places_.id), place.getId()));
+        criteriaQuery.where(criteriaBuilder.equal(joinUser.get(Users_.username), find.getSurname()), criteriaBuilder.equal(joinPlace.get(Places_.id), place.getId()));
         //Création de la requête
         Query q = em.createQuery(criteriaQuery);
         //Retour du résultat

@@ -14,11 +14,7 @@
                 <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
             </h:panelGroup>
             <h:form>
-                <h:panelGrid columns="2">
-                    <h:outputLabel value="#{bundle.CreatePlacesLabel_published_by}" for="published_by" />
-                    <h:selectOneMenu id="published_by" value="#{placesController.selected.published_by}" title="#{bundle.CreatePlacesTitle_published_by}" >
-                        <f:selectItems value="#{usersController.itemsAvailableSelectOne}"/>
-                    </h:selectOneMenu>
+                <h:panelGrid columns="2">   
                     <h:outputLabel value="#{bundle.CreatePlacesLabel_title}" for="title" />
                     <h:inputText id="title" value="#{placesController.selected.title}" title="#{bundle.CreatePlacesTitle_title}" required="true" requiredMessage="#{bundle.CreatePlacesRequiredMessage_title}"/>
                     <h:outputLabel value="#{bundle.CreatePlacesLabel_latitude}" for="latitude" />
@@ -32,10 +28,6 @@
                 <h:commandLink action="#{placesController.create}" value="#{bundle.CreatePlacesSaveLink}" />
                 <br />
                 <br />
-                <h:commandLink action="#{placesController.prepareList}" value="#{bundle.CreatePlacesShowAllLink}" immediate="true"/>
-                <br />
-                <br />
-                <h:link outcome="/index" value="#{bundle.CreatePlacesIndexLink}"/>
             </h:form>
         </div>
     </ui:define>
