@@ -33,12 +33,12 @@
                             </h:panelGroup>
                             <h:panelGroup rendered="#{request.isUserInRole('admin') || request.isUserInRole('moderator')}">
                                 <li>
-                                    <h:link value="Validations" outcome="/pages/places/Validation.xhtml"/>
+                                    <h:link value="Validations" outcome="/pages/places/moderator/Validation.xhtml"/>
                                 </li>
                             </h:panelGroup>
-                            <h:panelGroup rendered="#{not empty request.remoteUser}">
+                            <h:panelGroup rendered="#{request.isUserInRole('standard')}">
                                 <li>
-                                    <h:link value="Mes lieux" outcome="/pages/places/MyPlaces.xhtml"/>
+                                    <h:link value="Mes lieux" outcome="/pages/places/standard/MyPlaces.xhtml"/>
                                 </li>
                             </h:panelGroup>
                             <li>

@@ -7,12 +7,15 @@
         <div class="container maxHeight">
             <h2>S'inscrire</h2>
             <f:view>
+                <h:panelGroup id="messagePanel" layout="block">
+                    <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+                </h:panelGroup>
                 <h:form> 
                     <h:panelGrid columns="2">
                         <h:outputLabel value="#{bundle.CreateUsersLabel_username}" for="username" />
-                        <h:inputText id="username" value="#{usersController.selected.username}" title="#{bundle.CreateUsersTitle_username}" />
+                        <h:inputText id="username" value="#{usersController.usernameLogin}" title="#{bundle.CreateUsersTitle_username}" />
                         <h:outputLabel value="#{bundle.CreateUsersLabel_password}" for="password" />
-                        <h:inputSecret id="password" value="#{usersController.selected.password}" title="#{bundle.CreateUsersTitle_password}" />
+                        <h:inputSecret id="password" value="#{usersController.passwordLogin}" title="#{bundle.CreateUsersTitle_password}" />
                         <h:outputLabel value="#{bundle.CreateUsersLabel_name}" for="name" />
                         <h:inputText id="name" value="#{usersController.selected.name}" title="#{bundle.CreateUsersTitle_name}" />
                         <h:outputLabel value="#{bundle.CreateUsersLabel_surname}" for="surname" />

@@ -156,7 +156,7 @@
                     </ul>
                 </h:panelGroup>
                 <br />
-                <h:commandLink action="#{searchManagedBean.prepareCreate}" value="#{bundle.ListPlacesCreateLink}" rendered="#{not empty request.remoteUser}" class="waves-effect waves-light btn-large right">
+                <h:commandLink action="#{placesController.prepareCreate()}" value="#{bundle.ListPlacesCreateLink}" rendered="#{request.isUserInRole('standard')}" class="waves-effect waves-light btn-large right">
                     <i class="material-icons left">add_circle_outline</i>
                 </h:commandLink>
                 <br/>

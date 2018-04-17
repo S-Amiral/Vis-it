@@ -31,11 +31,29 @@
     </login-config>
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>Places Administration</web-resource-name>
+            <web-resource-name>administration role</web-resource-name>
             <url-pattern>/faces/pages/users/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Moderator role</web-resource-name>
+            <url-pattern>/faces/pages/places/moderator/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>moderator</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Standard role</web-resource-name>
+            <url-pattern>/faces/pages/places/standard/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>standard</role-name>
         </auth-constraint>
     </security-constraint>
     <security-role>
@@ -43,5 +61,8 @@
     </security-role>
     <security-role>
         <role-name>moderator</role-name>
+    </security-role>
+    <security-role>
+        <role-name>standard</role-name>
     </security-role>
 </web-app>

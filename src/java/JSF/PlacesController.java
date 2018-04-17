@@ -121,31 +121,31 @@ public class PlacesController implements Serializable {
 
     public String prepareList() {
         recreateModel();
-        return "List";
+        return "/pages/places/List.xhtml";
     }
 
     public String prepareView() {
         current = (Places) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
-        return "View";
+        return "/pages/places/View.xhtml";
     }
 
     public String prepareValidationView() {
         current = (Places) getValidationItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getValidationItems().getRowIndex();
-        return "View";
+        return "/pages/places/View.xhtml";
     }
 
     public String prepareMyItemsView() {
         current = (Places) getMyItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getMyItems().getRowIndex();
-        return "View";
+        return "/pages/places/View.xhtml";
     }
 
     public String prepareCreate() {
         current = new Places();
         selectedItemIndex = -1;
-        return "Create";
+        return "/pages/places/standard/Create.xhtml";
     }
 
     public String create() {
@@ -163,13 +163,13 @@ public class PlacesController implements Serializable {
     public String prepareEdit() {
         current = (Places) getItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getItems().getRowIndex();
-        return "Edit";
+        return "/pages/places/standard/Edit.xhtml";
     }
 
     public String prepareValidationEdit() {
         current = (Places) getValidationItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getValidationItems().getRowIndex();
-        return "Edit";
+        return "/pages/places/standard/Edit.xhtml";
     }
 
     public String validatePlace() {
@@ -180,7 +180,7 @@ public class PlacesController implements Serializable {
             JsfUtil.addSuccessMessage("Le lieu a été approuvé!");
             recreatePagination();
             recreateModel();
-            return "Validation";
+            return "/pages/places/moderator/Validation.xhtml";
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
             return null;
@@ -190,14 +190,14 @@ public class PlacesController implements Serializable {
     public String prepareMyItemsEdit() {
         current = (Places) getMyItems().getRowData();
         selectedItemIndex = pagination.getPageFirstItem() + getMyItems().getRowIndex();
-        return "Edit";
+        return "/pages/places/standard/Edit.xhtml";
     }
 
     public String update() {
         try {
             getFacade().edit(current);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("PlacesUpdated"));
-            return "View";
+            return "/pages/places/View.xhtml";
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
             return null;
@@ -210,7 +210,7 @@ public class PlacesController implements Serializable {
         performDestroy();
         recreatePagination();
         recreateModel();
-        return "List";
+        return "/pages/places/List.xhtml";
     }
 
     public String destroyValidationItems() {
@@ -219,7 +219,7 @@ public class PlacesController implements Serializable {
         performDestroy();
         recreatePagination();
         recreateModel();
-        return "Validation";
+        return "/pages/places/moderator/Validation.xhtml";
     }
 
     public String destroyMyItems() {
@@ -228,7 +228,7 @@ public class PlacesController implements Serializable {
         performDestroy();
         recreatePagination();
         recreateModel();
-        return "MyPlaces";
+        return "/pages/places/standard/MyPlaces.xhtml";
     }
 
     public String destroyAndView() {
@@ -236,11 +236,11 @@ public class PlacesController implements Serializable {
         recreateModel();
         updateCurrentItem();
         if (selectedItemIndex >= 0) {
-            return "View";
+            return "/pages/places/View.xhtml";
         } else {
             // all items were removed - go back to list
             recreateModel();
-            return "List";
+            return "/pages/places/List.xhtml";
         }
     }
 
@@ -309,55 +309,55 @@ public class PlacesController implements Serializable {
     public String page(int page) {
         getPagination().setPage(page - 1);
         recreateModel();
-        return "List";
+        return "/pages/places/List.xhtml";
     }
 
     public String page(int page, String publisher) {
         getPagination(publisher).setPage(page - 1);
         recreateModel();
-        return "MyPlaces";
+        return "/pages/places/standard/MyPlaces.xhtml";
     }
 
     public String page(int page, int option) {
         getPagination(option).setPage(page - 1);
         recreateModel();
-        return "Validation";
+        return "/pages/places/moderator/Validation.xhtml";
     }
 
     public String next() {
         getPagination().nextPage();
         recreateModel();
-        return "List";
+        return "/pages/places/List.xhtml";
     }
 
     public String next(String publisher) {
         getPagination(publisher).nextPage();
         recreateModel();
-        return "MyPlaces";
+        return "/pages/places/standard/MyPlaces.xhtml";
     }
 
     public String next(int option) {
         getPagination(option).nextPage();
         recreateModel();
-        return "Validation";
+        return "/pages/places/moderator/Validation.xhtml";
     }
 
     public String previous() {
         getPagination().previousPage();
         recreateModel();
-        return "List";
+        return "/pages/places/List.xhtml";
     }
 
     public String previous(String publisher) {
         getPagination(publisher).previousPage();
         recreateModel();
-        return "MyPlaces";
+        return "/pages/places/standard/MyPlaces.xhtml";
     }
 
     public String previous(int option) {
         getPagination(option).previousPage();
         recreateModel();
-        return "Validation";
+        return "/pages/places/moderator/Validation.xhtml";
     }
 
     public SelectItem[] getItemsAvailableSelectMany() {
@@ -429,6 +429,6 @@ public class PlacesController implements Serializable {
     
     public String viewPlace(Long id){
         current = getPlaces(id);
-        return "View";
+        return "/pages/places/View.xhtml";
     }
 }

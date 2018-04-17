@@ -116,13 +116,22 @@ public class UsersController implements Serializable {
 
     public String create() {
         try {
+            String page = "/index?faces-redirect=true";
+            FacesContext context = FacesContext.getCurrentInstance();
+            HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+            current.setUsername(usernameLogin);
+            current.setPassword(passwordLogin);
             getFacade().create(current);
             setStandard(current.getUsername());
+            request.login(usernameLogin,passwordLogin);
+            userLogged = getUsers(usernameLogin);
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+            session.setAttribute("userLogged", userLogged);
             JsfUtil.addSuccessMessage(ResourceBundle.getBundle("/Bundle").getString("UsersCreated"));
-            return prepareCreate();
+            return page;
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
-            return null;
+            return "register";
         }
     }
 
@@ -238,12 +247,10 @@ public class UsersController implements Serializable {
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
             System.out.println(session.getId());
             session.setAttribute("userLogged", userLogged);
-            /*session.setAttribute("username", usernameLogin);
-            System.out.println("AuthentificationBeans : Login requested");*/
         } catch (ServletException e) {
             e.printStackTrace();
-            context.addMessage(null, new FacesMessage("Votre email/mot de passe est incorrect"));
-            page = "/login?faces-redirect=true";
+            context.addMessage(null, new FacesMessage("Votre nom d'utilisateur/mot de passe est incorrect"));
+            page = "/pages/login.xhtml";
         }
         return page;
     }
@@ -337,7 +344,7 @@ public class UsersController implements Serializable {
         List<Groups> currentGroups = current.getGroups();
         currentGroups.removeIf(group -> group.getGroupName().equals("admin"));
         current.setGroups(currentGroups);
-        
+
         try {
             getFacade().edit(current);
             JsfUtil.addSuccessMessage(username + " n'est plus administrateur");
