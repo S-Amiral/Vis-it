@@ -1,6 +1,3 @@
-# persistence.xml file
-src/conf/persistence.xml
-
 # Created by https://www.gitignore.io/api/java,netbeans,java-web
 
 ### Java ###
@@ -42,4 +39,8 @@ nbactions.xml
 
 
 # End of https://www.gitignore.io/api/java,netbeans,java-web
+
 /Vis-it/nbproject/private/
+
+# persistence.xml file
+persistence.xml

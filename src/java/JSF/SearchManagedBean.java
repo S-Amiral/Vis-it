@@ -13,14 +13,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.annotation.ManagedProperty;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
@@ -42,16 +39,6 @@ public class SearchManagedBean implements Serializable {
     private String datePeriod;
     private int minScore;
     private Map<String, String> filters;
-    @ManagedProperty(value="#{placesController}")
-    private PlacesController placeController;
-
-    public PlacesController getPlaceController() {
-        return placeController;
-    }
-
-    public void setPlaceController(PlacesController placeController) {
-        this.placeController = placeController;
-    }
 
     public int getMinScore() {
         return minScore;

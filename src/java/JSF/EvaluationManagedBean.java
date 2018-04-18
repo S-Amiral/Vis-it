@@ -11,7 +11,6 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
-import javax.faces.annotation.ManagedProperty;
 import javax.faces.context.FacesContext;
 
 /**
@@ -21,18 +20,7 @@ import javax.faces.context.FacesContext;
 @Named(value = "evaluationManagedBean")
 @RequestScoped
 public class EvaluationManagedBean {
-
-    @ManagedProperty(value = "#{placesController}")
-    private PlacesController placesController;
-
-    public PlacesController getPlacesController() {
-        return placesController;
-    }
-
-    public void setPlacesController(PlacesController placesController) {
-        this.placesController = placesController;
-    }
-
+    
     @EJB
     private SessionBeans.EvaluationFacade ejbFacade;
 
