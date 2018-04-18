@@ -1,3 +1,6 @@
+# persistence.xml file
+src/conf/persistence.xml
+
 # Created by https://www.gitignore.io/api/java,netbeans,java-web
 
 ### Java ###
